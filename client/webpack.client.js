@@ -27,7 +27,6 @@ module.exports = {
 	path: path.resolve(__dirname, 'dist'),
 	filename: 'client.js'
     },
-    
     module: {
 	rules: [
 	    {
@@ -36,7 +35,15 @@ module.exports = {
 		use: {
 		    loader: "babel-loader",
 		    options: {
-			presets: ["@babel/env", "@babel/react"]
+			presets: ["@babel/env", "@babel/react"],
+			plugins: [
+			    /* To enable state = {} */
+			    "@babel/plugin-proposal-class-properties",
+			    /* Readable styled components class names in devtools */
+			    ["babel-plugin-styled-components", {
+				"displayName": true
+			    }]
+			]
 		    },
 		}
 	    }

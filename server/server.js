@@ -13,9 +13,13 @@ server.use(cors())
 /* parse received json, and put it into req.body */
 server.use(bodyParser.json({ limit: '50mb' }))
 
+
 server.get('/client.js', (req,res) => {
     res.sendFile(path.resolve(__dirname, '../client/dist/client.js'));
 })
+
+
+/* server.use(express.static('../client/dist')) */
 
 server.use((req, res) =>
     res.sendFile(path.resolve(__dirname, '../client/index.html')));
