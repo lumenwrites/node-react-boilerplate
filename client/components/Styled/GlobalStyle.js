@@ -50,36 +50,36 @@ p {
 a {
     cursor: pointer;
     color: ${props => props.theme.linkColor};
-&:hover, &:active, &:focus {
-    color: ${props => props.theme.linkColor};
-    svg path {
-	fill: ${props => props.theme.linkColor};
-    }
-}
+	   &:hover, &:active, &:focus {
+	       color: ${props => props.theme.linkColor};
+	       svg path {
+		   fill: ${props => props.theme.linkColor};
+	       }
+	   }
 }
 
 
 
 /* Helpers */
-    .clearfix::after {
+.clearfix::after {
 	content: "";
 	clear: both;
 	display: table;
-    }
-    .left { float: left; }
-    .right { float: right; }
-    .centered { margin: auto; }
-    .center-text { text-align: center; }
-    .no-decoration { text-decoration: none; }
-    .hidden { display: none; }
-    .bold { font-weight: bold; }
-    .italic { font-style: italic; }
-    .underline { text-decoration: underline; }
-    .pointer { cursor: pointer; }
-    .full-width { width: 100%; }
-    .paddings-20 { padding:20px; }
-    .small-text { font-size: 12px; }
-    .dim { color: rgba(112, 126, 148, 0.57);}
+}
+.left { float: left; }
+.right { float: right; }
+.centered { margin: auto; }
+.center-text { text-align: center; }
+.no-decoration { text-decoration: none; }
+.hidden { display: none; }
+.bold { font-weight: bold; }
+.italic { font-style: italic; }
+.underline { text-decoration: underline; }
+.pointer { cursor: pointer; }
+.full-width { width: 100%; }
+.paddings-20 { padding:20px; }
+.small-text { font-size: 12px; }
+.dim { color: rgba(112, 126, 148, 0.57);}
 
 /* Elements */
 hr {
