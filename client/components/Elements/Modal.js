@@ -13,9 +13,11 @@ class Modal extends Component {
 		{on &&
 		 <ModalWrapper>
 		     <ModalCard>
-			 <CloseButton onClick={toggle}>
+			 {/*  
+			     <CloseButton onClick={toggle}>
 			     <Icon name="close"/>
-			 </CloseButton>
+			     </CloseButton>
+			   */}
 			 <div>{children}</div>
 		     </ModalCard>
 		     <Background  onClick={toggle}/>
@@ -46,18 +48,18 @@ const Background = styled.div`
     background: rgba(0,0,0,0.4);
 `
 
-export const Card = styled.div`
-    background: white;
+const ModalCard = styled.div`
+    background:  ${props => props.theme.modalBackground};
     border-radius: 2px;
     padding: 16px 32px;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-`
-
-const ModalCard = styled(Card)`
     position: relative;
     min-width: 320px;
+    width: 40%;
     z-index:10;
-    margin-bottom: 100px; /* move card up */
+    position: absolute;
+    top: 16px;
+    
     h1, h2 {
       text-align:center;
     }

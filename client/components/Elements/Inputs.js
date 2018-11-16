@@ -8,4 +8,7 @@ export const Input = styled.input`
     margin-bottom: 8px;
     display: block;
     width: 100%;
+    &::placeholder {
+    color:  ${props => props.theme.placeholderTextColor};
+    }
 `

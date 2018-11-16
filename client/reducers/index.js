@@ -3,7 +3,7 @@ import { combineReducers } from 'redux'
 /* Vendor reducers */
 
 /* My reducers */
-import profileReducer from './profile.reducer'
+import profileReducer from './profile'
 
 
 /* Combine all reducers into one big state.

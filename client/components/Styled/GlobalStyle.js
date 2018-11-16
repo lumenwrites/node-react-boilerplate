@@ -4,6 +4,7 @@ const GlobalStyle = createGlobalStyle`
 /* General */
 html, body, #root {
     font-family: "Open Sans", sans-serif;
+    color: ${props => props.theme.textColor};
     margin:0;
     height: 100%;
 }

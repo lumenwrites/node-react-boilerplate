@@ -1,16 +1,19 @@
 import express from 'express'
 import bodyParser from 'body-parser' // Parse requests, turn them into json
 import morgan from 'morgan' // A logging framework, terminal output for debugging.
-import mongoose from 'mongoose' // ORM between mongo and node.
 import cors from 'cors' // Cors allows requests from different domains
 import path from 'path' // Manipulate filepaths
+
+/* import profilesRoutes from './routes/profiles.js' */
+debugger
+/* import connectDB from './connectDB' */
 
 /* Setup server */
 const server = express()
 server.set('view engine', 'ejs')
 server.set('views', __dirname + '/views')
 server.use(cors())
-/* parse received json, and put it into req.body */
+/* Parse received JSON, and put it into req.body */
 server.use(bodyParser.json({ limit: '50mb' }))
 
 

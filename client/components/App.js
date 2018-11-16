@@ -9,11 +9,15 @@ import { GlobalStyle } from './Styled'
 import LoginModal from './Profiles/LoginModal'
 
 const theme = {
+    textColor: '#582323',
+    placeholderTextColor: '#848faa',
     buttonBackground: '#f66303',
     buttonColor: 'white',
     inputBackground: 'white',
     border: '1px solid rgba(98,24,24,0.2)',
-    linkColor: '#008cba'
+    linkColor: '#008cba',
+    modalBackground: '#fff7e9',
+    panelBackground: '#fffaf1'
 }
 
 const AppStyled = styled.div`

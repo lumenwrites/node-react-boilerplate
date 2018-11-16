@@ -57,18 +57,6 @@ export function googleLogin(req, res, next) {
 }
 
 
-/* Email/Password Login.
-   Passport has checked that email/password match,
-   atteched user object to the request, and passed me through.
-   Now I return token and profile so that react could save token and load profile. */
-export function passwordLogin(req, res, next) {
-    console.log("[profiles.controllers] Password login, returning token and profile.",
-		req.user.email)
-    const profile = req.user
-    profile.lastLoggedIn = new Date()
-    profile.save()
-    res.send({token:tokenForUser(profile), ...returnProfile(profile)})
-}
 
 /* Email/Password Signup */
 export async function passwordSignup(req, res, next) {
@@ -89,6 +77,27 @@ export async function passwordSignup(req, res, next) {
     sendNewUserNotification(email, source)
 
     const createdProfile = await profile.save()
-    const token = tokenForUser(profile)
-    res.send({ token, ...returnProfile(profile) })
+    res.send({ token: tokenForUser(profile), ...returnProfile(profile) })
+}
+
+/* Email/Password Login. */
+export async function passwordLogin(req, res, next) {
+    const { email, password } = req.body
+
+    const profile = await Profile.findOne({email:email})
+    if (!profile) return done(new Error('User with this email not found'), false)
+    
+    if (profile.googleId && !profile.password) {
+	const err = new Error("Your account was created with Google Auth, "
+			    + "so it doesn't have a password. Use Google to login.")
+	return done(err, false)
+    }
+
+    const passwordsMatch = await bcrypt.compare(password, profile.password)
+    if (!passwordsMatch) return res.send({ error: ("Email and password don't match")})
+    
+    profile.lastLoggedIn = new Date()
+    profile.save()
+    
+    res.send({token:tokenForUser(profile), ...returnProfile(profile)})
 }

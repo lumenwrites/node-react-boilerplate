@@ -1,10 +1,68 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import isEmail from 'validator/lib/isEmail'
+import Cookies from 'js-cookie'
+import queryString from 'query-string'
+
+/* Actions */
+import { login, signup } from '../../actions/profile'
 
 /* Elements */
 import { Toggle } from '../Utilities'
-import { Modal, Button, Input } from '../Elements'
+import { Modal, Button, Input, Error } from '../Elements'
 
 class LoginModal extends Component {
+    state = { error: "" }
+
+    signup = ()=> {
+	const credentials = {
+	    email: this.signupEmail.value,
+	    password: this.signupPassword.value,
+	    source: Cookies.get('source')
+	}
+	console.log(credentials)
+	/* this.props.signup(credentials) */
+    }
+
+    login = () => {
+	const credentials = {
+	    email: this.loginEmail.value,
+	    password: this.loginPassword.value,
+	    source: Cookies.get('source')	    
+	}
+	console.log(credentials)
+	/* this.props.login(credentials) */
+    }
+
+    oAuth = () => {
+	var redirectUrl = "/api/v1/profiles/google"
+
+	var userMeta = {
+	    source: Cookies.get('source')	    
+	}
+	userMeta = queryString.stringify(userMeta)
+	if (userMeta.length) { userMeta = "?" + userMeta }
+
+	/* Redirect to server url, it will initiate passport oAuth process */
+	window.location.href = redirectUrl + userMeta
+    }
+
+    validateEmail() {
+	if (this.signupEmail && isEmail(this.signupEmail.value)) {
+	    this.setState({error:""})	    
+	} else {
+	    this.setState({error:"Please enter a valid email"})
+	}
+    }
+
+    validatePassword() {
+	if (this.signupPassword && this.signupPassword.value.length > 5) {
+	    this.setState({error:""})	    
+	} else {
+	    this.setState({error:"Password should be at least 5 characters long."})
+	}
+    }    
+
     render() {
 	return (
 	    <Toggle on>
@@ -12,15 +70,28 @@ class LoginModal extends Component {
 		    <>
 			<Button onClick={toggle}>Login</Button>
 			<Modal on={on} toggle={toggle}>
+			    <Error error={this.state.error} />
 			    <h2>Join</h2>
-			    <Input placeholder="Your email..." />
-			    <Input placeholder="Your password..." />
-			    <Button fullwidth>Join</Button>
+			    <Input ref={ref => this.signupEmail = ref}
+				   placeholder="Your email..."
+				   onBlur={this.validateEmail.bind(this)}
+				   autoComplete="true" />
+			    <Input ref={ref => this.signupPassword = ref}
+				   placeholder="Your password (5+ characters)..."
+				   type="password"
+				   onBlur={this.validatePassword.bind(this)}
+				   autoComplete="true" />
+			    <Button fullwidth onClick={this.signup}>Join</Button>
 			    <hr/>
 			    <h2>Login</h2>
-			    <Input placeholder="Your email..." />
-			    <Input placeholder="Your password..." />
-			    <Button fullwidth>Login</Button>
+			    <Input ref={ref => this.loginEmail = ref}
+				   placeholder="Your email..."
+				   autoComplete="true" />
+			    <Input ref={ref => this.loginPassword = ref}
+				   placeholder="Your password..."
+				   type="password" 
+				   autoComplete="true" />
+			    <Button fullwidth onClick={this.login}>Login</Button>
 			    <a href="/" className="small-text right dim no-decoration">
 				Forgot password?
 			    </a>
@@ -35,4 +106,4 @@ class LoginModal extends Component {
     }
 }
 
-export default LoginModal
+export default connect(null, {login, signup})(LoginModal)
