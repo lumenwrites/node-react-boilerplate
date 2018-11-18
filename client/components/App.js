@@ -1,12 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
-/* Styles */
 import styled, { ThemeProvider } from 'styled-components'
-import { GlobalStyle } from './Styled'
 
-/* Elements */
+/* Actions */
+import { fetchProfile } from '../actions/profiles'
+
+/* Modals */
 import LoginModal from './Profiles/LoginModal'
+/* Styles */
+import { GlobalStyle } from './Styled'
+/* Elements */
+import { Notification } from './Elements'
+/* Components */
+import Landing from './Landing'
+import Main from './Main'
 
 const theme = {
     textColor: '#582323',
@@ -17,35 +24,39 @@ const theme = {
     border: '1px solid rgba(98,24,24,0.2)',
     linkColor: '#008cba',
     modalBackground: '#fff7e9',
-    panelBackground: '#fffaf1'
+    panelBackground: '#fffaf1',
+    background1: '#f6e4cd',
+    background2: '#fff7e9',
+    background3: '#fffaf1'
 }
 
 const AppStyled = styled.div`
-    background: #f2f2f2;
-    padding: 15px;
+    background: ${props => props.theme.background1};    
     height: 100%;
 `
 
 
-
 class App extends Component {
+    componentDidMount(){
+	if (localStorage.getItem('token')) {
+	    console.log("[App] Fetch profile")
+	    this.props.fetchProfile()
+	}
+    }
     render() {
 	const { profile } = this.props
 	return (
 	    <ThemeProvider theme={theme}>
-	    <AppStyled>
-		App
-		<LoginModal/>
-		<GlobalStyle />
-	    </AppStyled>
+		<AppStyled>
+		    { localStorage.getItem('token') ? <Main/> : <Landing/> }
+		    <LoginModal/>
+		    <Notification/>
+		    <GlobalStyle />
+		</AppStyled>
 	    </ThemeProvider>
 	)
     }
 }
 
-const mapStateToProps = ({ profile }) => ({
-    profile
-})
 
-export default connect(mapStateToProps, {
-})(App)
+export default connect(({ profile }) => ({ profile }), { fetchProfile })(App)

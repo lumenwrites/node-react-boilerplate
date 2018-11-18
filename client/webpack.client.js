@@ -1,12 +1,11 @@
 const path = require('path')
-const webpack = require('webpack');
-var nodeExternals = require('webpack-node-externals');
-
-const isProd = process.env.NODE_ENV === "production"
+const webpack = require('webpack')
+var nodeExternals = require('webpack-node-externals')
+var dotenv = require('dotenv')
 
 function getPlugins() {
     const plugins = []
-    if (isProd) {
+    if (process.env.NODE_ENV === "production") {
 	/* Makes React tools development warning go away */
         plugins.push(new webpack.DefinePlugin({
 	    'process.env': {
@@ -15,6 +14,16 @@ function getPlugins() {
 	}))
     }
 
+
+    /*Parse environment vars(they have to be compiled by webpack to work on client)*/
+    const env = dotenv.config({ path: './variables.env'}).parsed
+    /* Turn them into a nice object */
+    const envKeys = Object.keys(env).reduce((prev, next) => {
+	prev[`process.env.${next}`] = JSON.stringify(env[next]);
+	return prev;
+    }, {});
+    plugins.push(new webpack.DefinePlugin(envKeys))
+    
     return plugins
 }
 

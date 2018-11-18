@@ -1,16 +1,22 @@
 import React, { Component } from 'react'
-
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 
+/* Actions */
+import { toggleModal } from '../../actions/utils'
+
+/* Elements */
 import { Portal } from '../Utilities'
 import Icon from './Icon'
 
 class Modal extends Component {
     render() {
-	const { children, toggle, on } = this.props
+	const { children, utils, name } = this.props
+	/* Show this modal if it's name matches name of the modal I want to show */
+	const showModal = utils.showModal === name
 	return (
 	    <Portal>
-		{on &&
+		{showModal &&
 		 <ModalWrapper>
 		     <ModalCard>
 			 {/*  
@@ -20,7 +26,7 @@ class Modal extends Component {
 			   */}
 			 <div>{children}</div>
 		     </ModalCard>
-		     <Background  onClick={toggle}/>
+		     <Background onClick={() => this.props.toggleModal(name)}/>
 		 </ModalWrapper>
 		}
 	    </Portal>
@@ -61,7 +67,7 @@ const ModalCard = styled.div`
     top: 16px;
     
     h1, h2 {
-      text-align:center;
+    text-align:center;
     }
 `
 
@@ -74,4 +80,4 @@ const CloseButton = styled.button`
     padding: 10px;
 `
 
-export default Modal
+export default connect(({ utils }) => ({ utils }), { toggleModal })(Modal)

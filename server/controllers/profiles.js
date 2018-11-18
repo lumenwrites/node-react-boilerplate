@@ -1,13 +1,14 @@
 import jwt from 'jwt-simple'
+import bcrypt from 'bcrypt'
 
 /* Utils */
-import { sendNewUserNotification } from '../utils/profiles.utils'
+import { sendNewUserNotification } from '../utils/profiles'
 
 /* Models */
-import Profile from '../models/profile.model'
+import Profile from '../models/Profile'
 
 /* Secret keys */
-import keys from '../config/keys'
+import keys from '../../config/keys'
 
 /* Generate JWT token for a user */
 function tokenForUser(profile) {
@@ -25,6 +26,7 @@ function returnProfile(profile) {
 
 /* Return profile (in exchange for jwt) */
 export function getProfile(req, res) {
+    console.log('getProfile')
     const profile  = req.user
     profile.lastLoggedIn = new Date()
     profile.save()
@@ -57,16 +59,15 @@ export function googleLogin(req, res, next) {
 }
 
 
-
 /* Email/Password Signup */
 export async function passwordSignup(req, res, next) {
     const { email, password, source }  = req.body
 
-    if (!email || !password) return res.send({ error:'Provide both email and password.'})
+    if (!email || !password) return res.status(400).send('Provide email and password.')
 
     /* Check if user with this email already exists */
     const existingProfile = await Profile.findOne({ email })
-    if (existingProfile) return res.send({ error:'Email is in use.' })
+    if (existingProfile) return res.status(400).send('Email is in use.')
 
     /* Hash password */
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -82,19 +83,20 @@ export async function passwordSignup(req, res, next) {
 
 /* Email/Password Login. */
 export async function passwordLogin(req, res, next) {
+    console.log('passwordLogin')
     const { email, password } = req.body
 
     const profile = await Profile.findOne({email:email})
-    if (!profile) return done(new Error('User with this email not found'), false)
+    if (!profile) return res.status(400).send('User with this email not found')
     
     if (profile.googleId && !profile.password) {
-	const err = new Error("Your account was created with Google Auth, "
-			    + "so it doesn't have a password. Use Google to login.")
-	return done(err, false)
+	const err = "Your account was created with Google Auth, "
+		  + "so it doesn't have a password. Use Google to login."
+	return res.status(400).send('User with this email not found')
     }
 
     const passwordsMatch = await bcrypt.compare(password, profile.password)
-    if (!passwordsMatch) return res.send({ error: ("Email and password don't match")})
+    if (!passwordsMatch) return res.status(400).send("Email and password don't match")
     
     profile.lastLoggedIn = new Date()
     profile.save()

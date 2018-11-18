@@ -5,10 +5,9 @@ import Cookies from 'js-cookie'
 import queryString from 'query-string'
 
 /* Actions */
-import { login, signup } from '../../actions/profile'
+import { login, signup } from '../../actions/profiles'
 
 /* Elements */
-import { Toggle } from '../Utilities'
 import { Modal, Button, Input, Error } from '../Elements'
 
 class LoginModal extends Component {
@@ -20,8 +19,7 @@ class LoginModal extends Component {
 	    password: this.signupPassword.value,
 	    source: Cookies.get('source')
 	}
-	console.log(credentials)
-	/* this.props.signup(credentials) */
+	this.props.signup(credentials)
     }
 
     login = () => {
@@ -30,8 +28,7 @@ class LoginModal extends Component {
 	    password: this.loginPassword.value,
 	    source: Cookies.get('source')	    
 	}
-	console.log(credentials)
-	/* this.props.login(credentials) */
+	this.props.login(credentials)
     }
 
     oAuth = () => {
@@ -65,43 +62,42 @@ class LoginModal extends Component {
 
     render() {
 	return (
-	    <Toggle on>
-		{({on, toggle})=> (
-		    <>
-			<Button onClick={toggle}>Login</Button>
-			<Modal on={on} toggle={toggle}>
-			    <Error error={this.state.error} />
-			    <h2>Join</h2>
-			    <Input ref={ref => this.signupEmail = ref}
-				   placeholder="Your email..."
-				   onBlur={this.validateEmail.bind(this)}
-				   autoComplete="true" />
-			    <Input ref={ref => this.signupPassword = ref}
-				   placeholder="Your password (5+ characters)..."
-				   type="password"
-				   onBlur={this.validatePassword.bind(this)}
-				   autoComplete="true" />
-			    <Button fullwidth onClick={this.signup}>Join</Button>
-			    <hr/>
-			    <h2>Login</h2>
-			    <Input ref={ref => this.loginEmail = ref}
-				   placeholder="Your email..."
-				   autoComplete="true" />
-			    <Input ref={ref => this.loginPassword = ref}
-				   placeholder="Your password..."
-				   type="password" 
-				   autoComplete="true" />
-			    <Button fullwidth onClick={this.login}>Login</Button>
-			    <a href="/" className="small-text right dim no-decoration">
-				Forgot password?
-			    </a>
-			    <div className="clearfix"/>
-			    <hr/>
-			    <Button fullwidth large>Signup/Login with Google</Button>
-			</Modal>
-		    </>
-		)}
-	    </Toggle>
+	    <Modal name="login">
+		<Error error={this.state.error} />
+		<h2>Join</h2>
+		<Input ref={ref => this.signupEmail = ref}
+		       placeholder="Your email..."
+		       type="email"
+		       name="email"
+		       onBlur={this.validateEmail.bind(this)}
+		       autoComplete="true" />
+		<Input ref={ref => this.signupPassword = ref}
+		       placeholder="Your password (5+ characters)..."
+		       type="password"
+		       name="password"
+		       onBlur={this.validatePassword.bind(this)}
+		       autoComplete="true" />
+		<Button fullwidth onClick={this.signup}>Join</Button>
+		<hr/>
+		<h2>Login</h2>
+		<Input ref={ref => this.loginEmail = ref}
+		       placeholder="Your email..."
+		       type="email"
+		       name="email"
+		       autoComplete="true" />
+		<Input ref={ref => this.loginPassword = ref}
+		       placeholder="Your password..."
+		       type="password"
+		       name="password"
+		       autoComplete="true" />
+		<Button fullwidth onClick={this.login}>Login</Button>
+		<a href="/" className="small-text right dim no-decoration">
+		    Forgot password?
+		</a>
+		<div className="clearfix"/>
+		<hr/>
+		<Button fullwidth large>Signup/Login with Google</Button>
+	    </Modal>
 	)
     }
 }

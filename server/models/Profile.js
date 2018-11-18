@@ -1,10 +1,10 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose from 'mongoose'
 import validator from 'validator' // for validating email
-import bcrypt from 'bcrypt-nodejs' // for hashing password
 import cuid from 'cuid' // for initial username
 
+const { Schema } = mongoose
 
-import { DEFAULT_PROFILE } from '../../client/utils/initialData.js'
+/* import { DEFAULT_PROFILE } from '../../client/utils/initialData.js' */
 
 const profileSchema = new Schema({
     username: {
@@ -32,7 +32,7 @@ const profileSchema = new Schema({
 	type: JSON,
 	unique: false,
 	required: false,
-	default: DEFAULT_PROFILE.prefs
+	/* default: DEFAULT_PROFILE.prefs */
     }
 })
 

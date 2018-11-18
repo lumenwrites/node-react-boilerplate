@@ -4,9 +4,10 @@ import morgan from 'morgan' // A logging framework, terminal output for debuggin
 import cors from 'cors' // Cors allows requests from different domains
 import path from 'path' // Manipulate filepaths
 
-/* import profilesRoutes from './routes/profiles.js' */
-debugger
-/* import connectDB from './connectDB' */
+import './connectDB'
+
+import profilesRoutes from './routes/profiles.js'
+
 
 /* Setup server */
 const server = express()
@@ -16,7 +17,8 @@ server.use(cors())
 /* Parse received JSON, and put it into req.body */
 server.use(bodyParser.json({ limit: '50mb' }))
 
-
+/* Endpoints */
+server.use('/api/v1/profiles', profilesRoutes)
 server.get('/client.js', (req,res) => {
     res.sendFile(path.resolve(__dirname, '../client/dist/client.js'));
 })

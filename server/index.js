@@ -1,3 +1,6 @@
+/* Make the variables.env available in our application */
+require('dotenv').config({ path: './variables.env'})
+
 /* Entry Script */
 if (process.env.NODE_ENV === 'production') {
     /* In production, serve the webpacked server file. */
@@ -9,6 +12,6 @@ if (process.env.NODE_ENV === 'production') {
 	"presets": ["@babel/preset-env"],
     })
     
-    // require('babel-polyfill') // For async/await
+    require('@babel/polyfill') // For async/await
     require('./server.js')
 }

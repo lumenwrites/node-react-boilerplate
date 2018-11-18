@@ -2,12 +2,12 @@ import base64url from 'base64url'
 import { Router } from 'express'
 import passport from 'passport'
 
-import * as profilesControllers from '../controllers/profiles.controllers';
+import * as profilesControllers from '../controllers/profiles';
 
 const router = new Router()
 
 /* Not using this anywhere, just import the file to execute it and setup passport. */
-import passportConfig from '../services/passport'
+import '../services/passport'
 
 /* Google auth */
 router.route('/google').get((req, res) => {
@@ -29,28 +29,16 @@ router.route('/google/callback').get(passport.authenticate('google', { session:f
 				     profilesControllers.googleLogin)
 
 
-
-
 /* Email/Password auth */
-const passwordAuth = passport.authenticate('local',{session:false},(err, user, info) => {
-    if (err) return next(err)
-    req.user = user /* Everything is successful, attach user to req and move on */
-    next()
-})
 /* Create user with email/password, returns JWT. */
 router.route('/password/signup').post(profilesControllers.passwordSignup)
 /* Login with email/password, returns JWT. */
-router.route('/password/login').post(passwordAuth, profilesControllers.passwordLogin)
+router.route('/password/login').post(profilesControllers.passwordLogin)
 
 
 
 /* JWT auth */
-const jwtAuth = passport.authenticate('jwt', {session:false}, (err, user, info) => {
-    if (err) return next(err)
-    req.user = user /* Everything is successful, attach user to req and move on */
-    next()
-})
-
+const jwtAuth = passport.authenticate('jwt', {session:false})
 /* Return profile in exchange for JWT. */
 router.route('/profile').get(jwtAuth, profilesControllers.getProfile)
 /* Update profile */

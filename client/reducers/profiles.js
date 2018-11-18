@@ -1,7 +1,7 @@
 /* import { DEFAULT_PROFILE } from '../utils/initialData' */
 
 const INITIAL_STATE = {
-    email: "ray@gmail.com",
+    email: "",
     prefs: {}
 }
 
@@ -17,7 +17,7 @@ export default function (state = INITIAL_STATE, action) {
 	    console.log("[profile.reducer] Updated profile",profile)
 	    return  {...profile, modified:false}
 	case 'LOGOUT':
-	    return  DEFAULT_PROFILE
+	    return  INITIAL_STATE
 	default:
 	    return state
     }

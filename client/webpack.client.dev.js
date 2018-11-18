@@ -1,6 +1,22 @@
 const path = require('path')
 const webpack = require('webpack');
 var nodeExternals = require('webpack-node-externals');
+var dotenv = require('dotenv')
+
+function getPlugins() {
+    /*Parse environment vars(they have to be compiled by webpack to work on client)*/
+    const env = dotenv.config({ path: './variables.env'}).parsed
+    /* Turn them into a nice object */
+    const envKeys = Object.keys(env).reduce((prev, next) => {
+	prev[`process.env.${next}`] = JSON.stringify(env[next]);
+	return prev;
+    }, {});
+
+    const plugins = []
+    plugins.push(new webpack.DefinePlugin(envKeys))
+
+    return plugins
+}
 
 module.exports = {
     /* Tell webpack the root file of our app */
@@ -10,11 +26,13 @@ module.exports = {
     output: {
 	path: path.resolve(__dirname, 'dist'),
 	filename: 'client.js',
-	publicPath: "/" //???
+	publicPath: '/', //?
     },
     devServer: {
 	contentBase: "dist",
-	overlay: true
+	overlay: true,
+	publicPath: 'http://localhost:8080/',
+	hot:false
     },
     module: {
 	rules: [
@@ -37,5 +55,6 @@ module.exports = {
 		}
 	    }
 	]
-    }
+    },
+    plugins: getPlugins()    
 }

@@ -1,20 +1,19 @@
 import base64url from 'base64url'
 
 /* Utils */
-import { sendNewUserNotification } from '../utils/profiles.utils'
+import { sendNewUserNotification } from '../utils/profiles'
 
 /* Passport is general helpers for handling auth in express apps. */
 import passport from 'passport'
 /* Strategies are helpers for authenticating with a specific method. */
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2'
 import { Strategy as JwtStrategy } from 'passport-jwt'
-import LocalStrategy from 'passport-local'
 import { ExtractJwt } from  'passport-jwt'
 /* Models */
 import mongoose from 'mongoose'
-import Profile from '../models/profile.model'
+import Profile from '../models/Profile'
 /* Secret keys */
-import keys from '../config/keys'
+import keys from '../../config/keys'
 
 /* Google Auth */
 const googleAuth = new GoogleStrategy({
@@ -57,34 +56,14 @@ const googleAuth = new GoogleStrategy({
 })
 
 
-/* "LocalStrategy" means Email/Password Auth. */
-const passwordAuth = new LocalStrategy({
-    /* By default passport uses username and password, I want to use email instead */
-    usernameField: 'email'
-}, async (email, password, done) => {
-    console.log("Checking username and password. If they match - pass person in.");
-    const profile = await Profile.findOne({email:email})
-    if (!profile) return done(new Error('User with this email not found'), false)
-    
-    if (profile.googleId && !profile.password) {
-	const err = new Error("Your account was created with Google Auth, "
-			    + "so it doesn't have a password. Use Google to login.")
-	return done(err, false)
-    }
-
-    const passwordsMatch = await bcrypt.compare(password, profile.password)
-    if (!passwordsMatch) return done(new Error("Email and password don't match"), false)
-
-    done(null, profile) // Logged in, return user
-})
-
 
 /* JWT Auth */
 const jwtAuth = new JwtStrategy({
     /* Tell it where to look for token */
     jwtFromRequest: ExtractJwt.fromHeader('authorization'),
     /* secretOrKey is used to decode the token. */
-    secretOrKey: keys.secret
+    secretOrKey: keys.secret,
+    /* passReqToCallback: true, */
 }, async (payload, done) => {
     /* Payload contains a decoded JWT token, containing sub and iat
        sub(subject) is profile.id, iat - issued at time. */
@@ -97,6 +76,5 @@ const jwtAuth = new JwtStrategy({
 })
 
 /* Tell passport to use strategies I've created */
-passport.use(passwordAuth)
 passport.use(jwtAuth)
 passport.use(googleAuth)
