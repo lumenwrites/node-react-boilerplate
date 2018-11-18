@@ -48,9 +48,10 @@ const googleAuth = new GoogleStrategy({
     })
     createdProfile.save()
 
+    console.log('Profile created')
     /* Email me a message that new user has joined */
     sendNewUserNotification(profile.emails[0].value, source)
-
+    console.log('Message sent')
     console.log(`Profile ${profile.emails[0].value} created!`)
     done(null, createdProfile)
 })

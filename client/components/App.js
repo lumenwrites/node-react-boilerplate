@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled, { ThemeProvider } from 'styled-components'
+import queryString from 'query-string'
 
 /* Actions */
 import { fetchProfile } from '../actions/profiles'
+import { setNotification } from '../actions/utils'
 
 /* Modals */
 import LoginModal from './Profiles/LoginModal'
@@ -38,6 +40,15 @@ const AppStyled = styled.div`
 
 class App extends Component {
     componentDidMount(){
+	if (window.location.pathname == '/login/') {
+	    console.log("[Main] Mounted after oAuth.")
+	    const { token } = queryString.parse(location.search)
+	    console.log('[Main] Saving token to local storage, redirecting to /')
+	    localStorage.setItem('token', token)
+	    window.history.replaceState(null, null, '/')
+	    this.props.setNotification('Login successful!')
+	}
+	
 	if (localStorage.getItem('token')) {
 	    console.log("[App] Fetch profile")
 	    this.props.fetchProfile()
@@ -59,4 +70,5 @@ class App extends Component {
 }
 
 
-export default connect(({ profile }) => ({ profile }), { fetchProfile })(App)
+export default connect(({ profile }) => ({ profile }),
+		       { fetchProfile, setNotification })(App)

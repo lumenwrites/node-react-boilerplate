@@ -19,15 +19,17 @@ server.use(bodyParser.json({ limit: '50mb' }))
 
 /* Endpoints */
 server.use('/api/v1/profiles', profilesRoutes)
+
+/* Static files */
+server.use("/img", express.static(path.resolve(__dirname, '../client/static/img')))
 server.get('/client.js', (req,res) => {
-    res.sendFile(path.resolve(__dirname, '../client/dist/client.js'));
+    res.sendFile(path.resolve(__dirname, '../client/dist/client.js'))
 })
 
-
-/* server.use(express.static('../client/dist')) */
-
 server.use((req, res) =>
-    res.sendFile(path.resolve(__dirname, '../client/index.html')));
+    res.sendFile(path.resolve(__dirname, '../client/index.html')))
+
+
 
 /* Serve */
 const port = process.env.PORT || 3030

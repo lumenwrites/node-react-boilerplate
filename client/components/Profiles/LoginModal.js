@@ -96,7 +96,8 @@ class LoginModal extends Component {
 		</a>
 		<div className="clearfix"/>
 		<hr/>
-		<Button fullwidth large>Signup/Login with Google</Button>
+		<Button fullwidth large
+			onClick={this.oAuth.bind(this)}>Signup/Login with Google</Button>
 	    </Modal>
 	)
     }
