@@ -15,7 +15,7 @@ export default function (state = INITIAL_STATE, action) {
 	case 'UPDATE_PROFILE':
 	    var profile = action.payload
 	    console.log("[profile.reducer] Updated profile",profile)
-	    return  {...profile, modified:false}
+	    return  {...profile}
 	case 'LOGOUT':
 	    return  INITIAL_STATE
 	default:

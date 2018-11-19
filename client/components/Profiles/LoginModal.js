@@ -63,7 +63,7 @@ class LoginModal extends Component {
     render() {
 	return (
 	    <Modal name="login">
-		<Error error={this.state.error} />
+		<Error error={this.state.error || this.props.error} />
 		<h2>Join</h2>
 		<Input ref={ref => this.signupEmail = ref}
 		       placeholder="Your email..."
@@ -103,4 +103,4 @@ class LoginModal extends Component {
     }
 }
 
-export default connect(null, {login, signup})(LoginModal)
+export default connect(({utils: { error }})=>({error}), {login, signup})(LoginModal)
