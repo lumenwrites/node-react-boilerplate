@@ -15,11 +15,16 @@ class Menu extends Component {
 		    <FontAwesomeIcon icon={["fas", "bars"]}/>
 		</div>
 		<div className="dropdown-menu">
-		      <div className="menu-item"
-			   onClick={()=> this.props.logout(this.props.history)}>
-			  <FontAwesomeIcon icon={["fas", "sign-out-alt"]}/>
-			  Logout
-		      </div>
+		    <div className="menu-item"
+			onClick={()=> this.props.toggleModal("settings")}>
+			<FontAwesomeIcon icon={["fas", "cog"]}/>
+			Settings
+		    </div>
+		    <div className="menu-item"
+			 onClick={()=> this.props.logout(this.props.history)}>
+			<FontAwesomeIcon icon={["fas", "sign-out-alt"]}/>
+			Logout
+		    </div>
 		</div>
 	    </Dropdown>
 	)

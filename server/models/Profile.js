@@ -21,6 +21,9 @@ const profileSchema = new Schema({
     },
     /* For email auth */
     password: { type: 'String' },
+    /* Reset password */
+    resetToken: { type: 'String' },
+    resetTokenExpiry: { type: 'Number' },
     /* For google auth */
     googleId: { type: 'String' },
     /* Meta */

@@ -1,7 +1,7 @@
 var INITIAL_STATE = {
     showModal: "",
     error: "",
-    notification: "",    
+    notification: "",
 }
 
 export default function (state = INITIAL_STATE, action) {
@@ -13,12 +13,13 @@ export default function (state = INITIAL_STATE, action) {
 	    return {...state, showModal: alreadyOpen ? false : modal }
 	case 'NOTIFICATION':
 	    return {...state, notification: action.payload}
+	case 'MESSAGE':
+	    return {...state, message: action.payload}
 	case 'ERROR':
 	    return {...state, error: action.payload}
 	case 'FETCH_PROFILE':
 	    /* Successfully fetched profile, remove error message, close modal. */
-	    return {...state, showModal: false, error:""}
-	    /* return {...state, showModal: "", error:""} */
+	    return {...state, showModal: "", error:""}
 	case 'LOGOUT':
 	    return {...state, notification: "Logout successful."}
 	default:

@@ -1,5 +1,14 @@
 import jwt from 'jwt-simple'
 import bcrypt from 'bcrypt'
+/* For generating random token */
+import { randomBytes } from 'crypto'
+/* Turn callback-based function into a promise-based function, so I could use
+   await with randomBytes*/
+import { promisify } from 'util'
+
+/* Sendgrid for password reset */
+import sgMail from '@sendgrid/mail'
+sgMail.setApiKey(keys.sendgrid)
 
 /* Utils */
 import { sendNewUserNotification } from '../utils/profiles'
@@ -92,7 +101,7 @@ export async function passwordLogin(req, res, next) {
     if (profile.googleId && !profile.password) {
 	const err = "Your account was created with Google Auth, "
 		  + "so it doesn't have a password. Use Google to login."
-	return res.status(400).send('User with this email not found')
+	return res.status(400).send(err)
     }
 
     const passwordsMatch = await bcrypt.compare(password, profile.password)
@@ -101,5 +110,59 @@ export async function passwordLogin(req, res, next) {
     profile.lastLoggedIn = new Date()
     profile.save()
     
+    res.send({token:tokenForUser(profile), ...returnProfile(profile)})
+}
+
+/* Reset password
+   - User enters his email and sends it here.
+   - I find Profile by email, add resetToken to it, and email the token to user.
+   - User clicks on a link, which takes him to ?token=abc123 url,
+   which opens a reset password form, and sends me new password and the token.
+   - I find the user's profile by token, and update his password.
+   - I return his profile and automatically log him in.
+ */
+
+export async function requestReset(req, res, next) {
+    const { email } = req.body
+
+    /* Find profile by email if it exists */
+    const profile = await Profile.findOne({email:email})
+    if (!profile) return res.status(400).send('User with this email not found')
+
+    /* Generate and save reset token */
+    const resetToken = (await promisify(randomBytes)(20)).toString('hex')
+    const resetTokenExpiry = Date.now() + (1000 * 60 * 60) /* 1 hour from now */
+    profile.resetToken = resetToken
+    profile.resetTokenExpiry = resetTokenExpiry
+    profile.save()
+
+    /* Email reset token to user */
+    const msg = {
+	to: profile.email,
+	from: process.env.CONTACT_EMAIL,
+	subject: `Reset your Writing Streak password`,
+	html: `Click <a href="${process.env.URL}/reset-password?token=${profile.resetToken}">this link</a> to reset your password. <br/> (link is valid for 1 hour)`
+    }
+    sgMail.send(msg)
+
+    return res.send('Check your email!')    
+}
+
+export async function resetPassword(req, res, next) {
+    const { token, password } = req.body
+
+    /* Find profile by reset token */
+    const profile = await Profile.findOne({resetToken:token})
+				 .where('resetTokenExpiry').gt(Date.now())
+    if (!profile) return res.status(400).send('This token is either invalid or expired.')
+    
+    /* Update password, remove tokens */
+    const newPassword = await bcrypt.hash(password, 10)
+    profile.password = newPassword
+    profile.resetToken = null
+    profile.resetTokenExpiry = null
+    profile.lastLoggedIn = new Date()
+    profile.save()
+    /* Return profile so I could login */
     res.send({token:tokenForUser(profile), ...returnProfile(profile)})
 }

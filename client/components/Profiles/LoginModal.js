@@ -6,6 +6,7 @@ import queryString from 'query-string'
 
 /* Actions */
 import { login, signup } from '../../actions/profiles'
+import { toggleModal } from '../../actions/utils'
 
 /* Elements */
 import { Modal, Button, Input, Error } from '../Elements'
@@ -19,7 +20,7 @@ class LoginModal extends Component {
 	    password: this.signupPassword.value,
 	    source: Cookies.get('source')
 	}
-	this.props.signup(credentials)
+	if (!this.state.error) this.props.signup(credentials)
     }
 
     login = () => {
@@ -28,7 +29,7 @@ class LoginModal extends Component {
 	    password: this.loginPassword.value,
 	    source: Cookies.get('source')	    
 	}
-	this.props.login(credentials)
+	if (!this.state.error) this.props.login(credentials)
     }
 
     oAuth = () => {
@@ -44,7 +45,7 @@ class LoginModal extends Component {
 	window.location.href = redirectUrl + userMeta
     }
 
-    validateEmail() {
+    validateEmail = ()=> {
 	if (this.signupEmail && isEmail(this.signupEmail.value)) {
 	    this.setState({error:""})	    
 	} else {
@@ -52,7 +53,7 @@ class LoginModal extends Component {
 	}
     }
 
-    validatePassword() {
+    validatePassword = ()=> {
 	if (this.signupPassword && this.signupPassword.value.length > 5) {
 	    this.setState({error:""})	    
 	} else {
@@ -69,13 +70,13 @@ class LoginModal extends Component {
 		       placeholder="Your email..."
 		       type="email"
 		       name="email"
-		       onBlur={this.validateEmail.bind(this)}
+		       onBlur={this.validateEmail}
 		       autoComplete="true" />
 		<Input ref={ref => this.signupPassword = ref}
 		       placeholder="Your password (5+ characters)..."
 		       type="password"
 		       name="password"
-		       onBlur={this.validatePassword.bind(this)}
+		       onBlur={this.validatePassword}
 		       autoComplete="true" />
 		<Button fullwidth onClick={this.signup}>Join</Button>
 		<hr/>
@@ -91,7 +92,8 @@ class LoginModal extends Component {
 		       name="password"
 		       autoComplete="true" />
 		<Button fullwidth onClick={this.login}>Login</Button>
-		<a href="/" className="small-text right dim no-decoration">
+		<a className="small-text right dim no-decoration"
+		    onClick={() => this.props.toggleModal('request-reset')}>
 		    Forgot password?
 		</a>
 		<div className="clearfix"/>
@@ -103,4 +105,5 @@ class LoginModal extends Component {
     }
 }
 
-export default connect(({utils: { error }})=>({error}), {login, signup})(LoginModal)
+export default connect(({utils: { error }})=>({error}),
+		       {login, signup, toggleModal})(LoginModal)

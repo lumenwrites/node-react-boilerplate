@@ -5,10 +5,13 @@ import queryString from 'query-string'
 
 /* Actions */
 import { fetchProfile } from '../actions/profiles'
-import { setNotification } from '../actions/utils'
+import { setNotification, toggleModal } from '../actions/utils'
 
 /* Modals */
 import LoginModal from './Profiles/LoginModal'
+import ForgotPasswordModal from './Profiles/ForgotPasswordModal'
+import ResetPasswordModal from './Profiles/ResetPasswordModal'
+import SettingsModal from './Profiles/SettingsModal'
 /* Styles */
 import { GlobalStyle } from './Styled'
 /* Elements */
@@ -41,12 +44,15 @@ const AppStyled = styled.div`
 class App extends Component {
     componentDidMount(){
 	if (window.location.pathname == '/login/') {
-	    console.log("[Main] Mounted after oAuth.")
+	    console.log("[App] Mounted after oAuth.")
 	    const { token } = queryString.parse(location.search)
 	    console.log('[Main] Saving token to local storage, redirecting to /')
 	    localStorage.setItem('token', token)
 	    window.history.replaceState(null, null, '/')
 	    this.props.setNotification('Login successful!')
+	}
+	if (window.location.pathname === '/reset-password') {
+	    this.props.toggleModal('reset-password')
 	}
 	
 	if (localStorage.getItem('token')) {
@@ -54,13 +60,37 @@ class App extends Component {
 	    this.props.fetchProfile()
 	}
     }
+
+    renderMain() {
+	/* If logged in, render the app, but only after profile is fetched */
+	if (!this.props.profile.email) return null
+	return (
+	    <>
+		<Main/>
+		<SettingsModal/>
+	    </>
+	)
+    }
+
+    renderLanding() {
+	return (
+	    <>
+		<Landing/>
+		<LoginModal/>
+		<ForgotPasswordModal/>
+		<ResetPasswordModal/>
+	    </>
+	) 
+    }
+
     render() {
 	const { profile } = this.props
+	console.log('App',this.props.profile.email)
 	return (
 	    <ThemeProvider theme={theme}>
 		<AppStyled>
-		    { localStorage.getItem('token') ? <Main/> : <Landing/> }
-		    <LoginModal/>
+		    { localStorage.getItem('token') ?
+		      this.renderMain() : this.renderLanding() }
 		    <Notification/>
 		    <GlobalStyle />
 		</AppStyled>
@@ -71,4 +101,4 @@ class App extends Component {
 
 
 export default connect(({ profile }) => ({ profile }),
-		       { fetchProfile, setNotification })(App)
+		       { fetchProfile, setNotification, toggleModal })(App)

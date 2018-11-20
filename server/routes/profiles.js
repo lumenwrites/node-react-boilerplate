@@ -34,6 +34,8 @@ router.route('/google/callback').get(passport.authenticate('google', { session:f
 router.route('/password/signup').post(profilesControllers.passwordSignup)
 /* Login with email/password, returns JWT. */
 router.route('/password/login').post(profilesControllers.passwordLogin)
+router.route('/request-reset').post(profilesControllers.requestReset)
+router.route('/reset-password').post(profilesControllers.resetPassword)
 
 
 
