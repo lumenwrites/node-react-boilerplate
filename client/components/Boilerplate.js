@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 export default connect(({ profile }) => ({ profile }), {})(App)
 
+/* Actions */
+import { fetchProfile } from '../actions/profiles'
 import { toggleModal } from '../../actions/utils'
 
 const Element = styled.div`
@@ -12,8 +14,4 @@ const Element = styled.div`
 `
 
 
-import { BrowserRouter as Router } from 'react-router-dom'
-<Router>
-<Route exact path="/" component={Landing}/>
-<Route exact path="/" component={Landing}/>
-</Router>
+

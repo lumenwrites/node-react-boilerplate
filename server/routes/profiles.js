@@ -46,5 +46,7 @@ router.route('/profile').get(jwtAuth, profilesControllers.getProfile)
 /* Update profile */
 router.route('/profile').post(jwtAuth, profilesControllers.updateProfile)
 
+/* Payments */
+router.route('/upgrade').post(jwtAuth, profilesControllers.upgrade)
 
 export default router

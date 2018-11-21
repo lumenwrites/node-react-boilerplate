@@ -12,6 +12,7 @@ import LoginModal from './Profiles/LoginModal'
 import ForgotPasswordModal from './Profiles/ForgotPasswordModal'
 import ResetPasswordModal from './Profiles/ResetPasswordModal'
 import SettingsModal from './Profiles/SettingsModal'
+import Upgrade from './Profiles/Upgrade'
 /* Styles */
 import { GlobalStyle } from './Styled'
 /* Elements */
@@ -68,6 +69,7 @@ class App extends Component {
 	    <>
 		<Main/>
 		<SettingsModal/>
+		<Upgrade/>
 	    </>
 	)
     }
@@ -85,7 +87,7 @@ class App extends Component {
 
     render() {
 	const { profile } = this.props
-	console.log('App',this.props.profile.email)
+	console.log('Render App', this.props.profile.email)
 	return (
 	    <ThemeProvider theme={theme}>
 		<AppStyled>

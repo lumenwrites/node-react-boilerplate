@@ -106,3 +106,18 @@ export const logout = (history) => {
 }
 
 
+
+/* Stripe Payments */
+export const upgrade = (token) => async dispatch => {
+    try {
+	const config = { headers:  { authorization:localStorage.getItem('token')} }
+	const res = await axios.post(`${API_URL}/profiles/upgrade`, { token }, config)
+	const profile = res.data
+	console.log(`We are in business, ${profile.email}!`)
+	/* dispatch({ type: 'FETCH_PROFILE', payload: profile }) */
+    } catch(err) {
+	if (!err.response) return console.log(err)
+	console.log("[profiles actions] upgrade profile error:", err.response.data)
+	dispatch({ type: 'ERROR', payload: err.response.data })
+    }     
+}

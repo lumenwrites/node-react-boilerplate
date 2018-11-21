@@ -6,6 +6,7 @@ import queryString from 'query-string'
 
 /* Actions */
 import { updateProfile } from '../../actions/profiles'
+import { toggleModal } from '../../actions/utils'
 
 /* Elements */
 import { Modal, Button, Input, Error } from '../Elements'
@@ -26,14 +27,14 @@ class ForgotPasswordModal extends Component {
     saveSettings = ()=> {
 	const { email } = this.state
 	const { profile } = this.props
-	profile.email = {...profile, email}
+	profile.email = email
 	profile.prefs = {...profile.prefs}
 	this.props.updateProfile(profile)
-	this.props.showModal(false)
+	this.props.toggleModal(false)
     }
 
     validateEmail = ()=> {
-	if (this.email && isEmail(this.email.value)) {
+	if (isEmail(this.state.email)) {
 	    this.setState({error:""})	    
 	} else {
 	    this.setState({error:"Please enter a valid email"})
@@ -41,7 +42,6 @@ class ForgotPasswordModal extends Component {
     }
 
     render() {
-	console.log('settings',this.props.profile)
 	return (
 	    <Modal name="settings">
 		<Error error={this.state.error || this.props.error} />
@@ -62,4 +62,4 @@ class ForgotPasswordModal extends Component {
 }
 
 export default connect(({utils: { error }, profile})=>({error, profile}),
-		       { updateProfile })(ForgotPasswordModal)
+		       { updateProfile, toggleModal })(ForgotPasswordModal)

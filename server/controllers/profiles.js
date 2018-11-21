@@ -5,10 +5,12 @@ import { randomBytes } from 'crypto'
 /* Turn callback-based function into a promise-based function, so I could use
    await with randomBytes*/
 import { promisify } from 'util'
-
 /* Sendgrid for password reset */
 import sgMail from '@sendgrid/mail'
 sgMail.setApiKey(keys.sendgrid)
+/* Stripe */
+import Stripe from 'stripe'
+const stripe = Stripe(process.env.STRIPE_SECRET)
 
 /* Utils */
 import { sendNewUserNotification } from '../utils/profiles'
@@ -47,11 +49,11 @@ export function updateProfile(req, res) {
     const profile = req.user
     var receivedProfile = req.body
 
-    profile.username = receivedProfile.username        
+    profile.email = receivedProfile.email        
     profile.prefs = receivedProfile.prefs
 
     profile.save((err, updatedProfile) => {
-	if (err) return res.send({ error:'Error updating a profile' })
+	if (err) return res.status(400).send('Error updating a profile.')
 	res.send(returnProfile(updatedProfile))
     })
 }
@@ -165,4 +167,43 @@ export async function resetPassword(req, res, next) {
     profile.save()
     /* Return profile so I could login */
     res.send({token:tokenForUser(profile), ...returnProfile(profile)})
+}
+
+
+/* Stripe payments*/
+export async function upgrade(req, res) {
+    const profile = req.user
+    const { token } = req.body
+    let customer, subscription
+    try {
+	/* You have to create a customer to be able to subscribe him to a plan. */
+	customer = await stripe.customers.create({
+	    email: profile.email,
+	    /* Source is customer's payment information, a stripe token */
+	    source: token.id,
+	})
+    } catch(err) {
+	console.log(err)
+	if (err) res.status(400).send('Error creating a customer')
+    }
+    /* Make sure to save customer id */
+    /* 
+       profile.stripeId = customer.id
+       profile.save()
+     */
+    console.log('now onto subscription')
+    try {
+	subscription = await stripe.subscriptions.create({
+	    customer: customer.id,
+	    /* If you dont need a different plan for every user,
+	       you just create predetermined ones in the dashboard
+	       (Billing>Products>ProductName>Plan, and get it's id). */
+	    items: [{plan: 'plan_E0NpvLFb1MWuO1'}],
+	})
+    } catch(err) {
+	console.log(err)
+	if (err) res.status(400).send('Error creating a subscription')
+    }
+    console.log('subscription created')
+    res.send(returnProfile(profile))
 }

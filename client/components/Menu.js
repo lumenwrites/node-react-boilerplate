@@ -16,6 +16,11 @@ class Menu extends Component {
 		</div>
 		<div className="dropdown-menu">
 		    <div className="menu-item"
+			onClick={()=> this.props.toggleModal("upgrade")}>
+			<FontAwesomeIcon icon={["fas", "arrow-circle-up"]}/>
+			Upgrade
+		    </div>
+		    <div className="menu-item"
 			onClick={()=> this.props.toggleModal("settings")}>
 			<FontAwesomeIcon icon={["fas", "cog"]}/>
 			Settings
