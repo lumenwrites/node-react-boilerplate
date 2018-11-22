@@ -45,7 +45,7 @@ class ForgotPasswordModal extends Component {
 	return (
 	    <Modal name="settings">
 		<Error error={this.state.error || this.props.error} />
-		<h2>Settings</h2>
+		<h2>Account Settings</h2>
 		<Input placeholder="Your email..."
 		       type="email"
 		       name="email"
@@ -53,9 +53,14 @@ class ForgotPasswordModal extends Component {
 		       onChange={this.onChange} 
 		       onBlur={this.validateEmail}
 		       autoComplete="true" />
-		<Button onClick={this.saveSettings}>
+		<Button className="right" onClick={this.saveSettings}>
 		    Save
 		</Button>
+		<Button>Delete Account</Button>
+		<hr/>
+		<h2> Subscription </h2>
+		<Button>Cancel subscription</Button>
+		<Button className="right">Update Card</Button>
 	    </Modal>
 	)
     }

@@ -62,12 +62,15 @@ const Dropdown = styled.div`
     padding: 8px;
     display:block;
     cursor:pointer;
-    text-decoration:none;
+    text-decoration:none;    
     &.active {
     color: white;
     }
     &:hover {
     background: #eee;		
+    }
+    svg {
+    margin-right: 8px;
     }
     }		
     }

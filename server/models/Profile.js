@@ -12,7 +12,7 @@ const profileSchema = new Schema({
 	default: ""
     },
     email: {
-	type: 'String',
+	type: String,
 	lowercase: true,
     	validate: {
 	    validator: validator.isEmail,
@@ -20,12 +20,12 @@ const profileSchema = new Schema({
 	}
     },
     /* For email auth */
-    password: { type: 'String' },
+    password: { type: String },
     /* Reset password */
-    resetToken: { type: 'String' },
+    resetToken: { type: String },
     resetTokenExpiry: { type: 'Number' },
     /* For google auth */
-    googleId: { type: 'String' },
+    googleId: { type: String },
     /* Meta */
     createdAt: { type: Date, default: new Date() },
     lastLoggedIn: { type: Date, default: new Date() },
@@ -37,8 +37,23 @@ const profileSchema = new Schema({
 	required: false,
 	/* default: DEFAULT_PROFILE.prefs */
     }
+    /* Stripe */
+    plan: { type: String, default: 'free' },
+    stripe: {
+	customerId: { type: String },
+	subscriptionId: { type: String },
+	/* Payment method, all the credit card info */
+	sourceId: { type: String },
+	sourceLast4: { type: String },
+	sourceBrand: { type: String }, // visa/mastercard
+    }
 })
 
+/* Send back to client only the fields I want from profile */
+profileSchema.methods.publicFields = function() {
+    const { email, username, prefs, plan } = this
+    return { email, username, prefs, plan }
+}
 
 /* Profile collection */
 export default mongoose.model('Profile', profileSchema)

@@ -29,19 +29,13 @@ function tokenForUser(profile) {
     return jwt.encode({ sub: profile.id, iat: timestamp }, keys.secret);
 }
 
-/* Send back to client only the fields I want from profile */
-function returnProfile(profile) {
-    const { email, username, prefs } = profile
-    return { email, username, prefs }
-}
-
 /* Return profile (in exchange for jwt) */
 export function getProfile(req, res) {
     console.log('getProfile')
     const profile  = req.user
     profile.lastLoggedIn = new Date()
     profile.save()
-    res.send(returnProfile(profile))
+    res.send(profile.publicFields())
 }
 
 /* Update profile */
@@ -89,7 +83,7 @@ export async function passwordSignup(req, res, next) {
     sendNewUserNotification(email, source)
 
     const createdProfile = await profile.save()
-    res.send({ token: tokenForUser(profile), ...returnProfile(profile) })
+    res.send({ token: tokenForUser(profile), ...profile.publicFields() })
 }
 
 /* Email/Password Login. */
@@ -112,7 +106,7 @@ export async function passwordLogin(req, res, next) {
     profile.lastLoggedIn = new Date()
     profile.save()
     
-    res.send({token:tokenForUser(profile), ...returnProfile(profile)})
+    res.send({token:tokenForUser(profile), ...profile.publicFields()})
 }
 
 /* Reset password
@@ -166,44 +160,105 @@ export async function resetPassword(req, res, next) {
     profile.lastLoggedIn = new Date()
     profile.save()
     /* Return profile so I could login */
-    res.send({token:tokenForUser(profile), ...returnProfile(profile)})
+    res.send({token:tokenForUser(profile), ...profile.publicFields()})
 }
 
 
-/* Stripe payments*/
+/* Stripe payments
+   Example:
+   https://github.com/stripe/stripe-billing-typographic
+   - Upgrade creates a customer and subscription and sets my user's plan to premium
+   - Update payment method updates credit card info
+   - Cancel subscription cancels subscription
+ */
 export async function upgrade(req, res) {
     const profile = req.user
     const { token } = req.body
-    let customer, subscription
     try {
 	/* You have to create a customer to be able to subscribe him to a plan. */
-	customer = await stripe.customers.create({
+	const customer = await stripe.customers.create({
 	    email: profile.email,
 	    /* Source is customer's payment information, a stripe token */
 	    source: token.id,
 	})
-    } catch(err) {
-	console.log(err)
-	if (err) res.status(400).send('Error creating a customer')
-    }
-    /* Make sure to save customer id */
-    /* 
-       profile.stripeId = customer.id
-       profile.save()
-     */
-    console.log('now onto subscription')
-    try {
-	subscription = await stripe.subscriptions.create({
+	const subscription = await stripe.subscriptions.create({
 	    customer: customer.id,
 	    /* If you dont need a different plan for every user,
 	       you just create predetermined ones in the dashboard
 	       (Billing>Products>ProductName>Plan, and get it's id). */
 	    items: [{plan: 'plan_E0NpvLFb1MWuO1'}],
 	})
+	/* Save all the fields I will need */
+	profile.stripe.customerId = customer.id
+	profile.stripe.subscriptionId = subscription.id
+	profile.plan = 'premium'
+	profile.save()
+	/* Return updated profile */
+	res.send(profile.publicFields())
     } catch(err) {
 	console.log(err)
-	if (err) res.status(400).send('Error creating a subscription')
+	if (err) res.status(400).send('Error upgrading an account')
     }
-    console.log('subscription created')
-    res.send(returnProfile(profile))
+
+
+}
+
+export async function updatePaymentMethod(req, res) {
+    const profile = req.user
+    const { token } = req.body
+    const { customerId } = profile.stripe
+    try {
+	// Stripe API: Attach the new source, update the default source
+	const createdSource = await stripe.customers.createSource(customerId, {
+            source: token.id,
+	})
+	const updatedCustomer = await stripe.customers.update(customerId, {
+            default_source: createdSource.id
+	})
+	/* Update our payment source in DB */
+	profile.stripe.sourceId = createdSource.id
+        profile.stripe.sourceLast4 = createdSource.last4
+        profile.stripe.sourceBrand = createdSource.brand
+	profile.save()
+	/* Return updated profile */
+	res.send(profile.publicFields())
+    } catch(err) {
+	console.log(err)
+	if (err) res.status(400).send('Error updating a payment method.')
+    }
+}
+
+export async function cancelSubscription(req, res) {
+    const profile = req.user
+    const { subscriptionId } = profile.stripe
+    try {
+	// Stripe: Cancel the subscription
+	const stripeSubscription = await stripe.subscriptions.del(subscriptionId)
+	// Delete subscription 
+	profile.stripe.subscriptionId = null
+	profile.plan = 'free'
+	profile.save()
+	/* Return updated profile */
+	res.send(profile.publicFields())
+    } catch(err) {
+	console.log(err)
+	if (err) res.status(400).send('Error canceling a subscription.')
+    }
+}
+
+/* Webhooks
+   https://stripe.com/docs/recipes/sending-emails-for-failed-payments
+   https://stripe.com/docs/webhooks
+   You expose a url, tell stripe about it in dashboard, and it'll notify you when
+   something happens, such as if payment fails
+ */
+export async function stripeWebhook(req, res) {
+    const event = req.body
+    /* need to check signature?
+       let sig = req.headers["stripe-signature"]*/
+
+    /* TODO:
+       If payment failed, send an email asking to update payment method,
+       and downgrade account to 'free' */
+    res.send(200)
 }
