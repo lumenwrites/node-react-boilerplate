@@ -10,20 +10,31 @@ import { Modal, Button, Error } from '../Elements'
 
 
 class Upgrade extends Component {
+    state = { waiting: false }
+
+    upgrade = token => {
+	this.setState({waiting:true})
+	console.log('flip state')
+	/* Run upgrade action */
+	this.props.upgrade(token)
+    }
+
+
     render() {
 	return (
 	    <Modal name="upgrade">
 		<h2> Upgrade your account </h2>
-		
 		<StripeCheckout
-		token={this.props.upgrade}
-		name="Upgrade"
-		stripeKey={process.env.STRIPE_PUBLIC}
-		amount={1000}
-		currency="USD"
-		email={this.props.profile.email}
-		allowRememberMe={false}>
-		    <Button fullwidth large> Upgrade ($10/mo) </Button>
+		    token={this.upgrade}
+		    name="Upgrade"
+		    stripeKey={process.env.STRIPE_PUBLIC}
+		    amount={1000}
+		    currency="USD"
+		    email={this.props.profile.email}
+		    allowRememberMe={false}>
+		    { this.state.waiting ?
+		      <p>Waiting for a response...</p>
+		      : <Button fullwidth large> Upgrade ($10/mo) </Button>}
 		</StripeCheckout>
 	    </Modal>
 	)

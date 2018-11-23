@@ -3,15 +3,18 @@ import { connect } from 'react-redux'
 import isEmail from 'validator/lib/isEmail'
 import Cookies from 'js-cookie'
 import queryString from 'query-string'
+import StripeCheckout from 'react-stripe-checkout'
 
 /* Actions */
-import { updateProfile } from '../../actions/profiles'
+import { updateProfile,
+	 updatePaymentInfo,
+	 cancelSubscription } from '../../actions/profiles'
 import { toggleModal } from '../../actions/utils'
 
 /* Elements */
 import { Modal, Button, Input, Error } from '../Elements'
 
-class ForgotPasswordModal extends Component {
+class SettingsModal extends Component {
     state = {
 	error: "",
 	email: this.props.profile.email
@@ -42,29 +45,62 @@ class ForgotPasswordModal extends Component {
     }
 
     render() {
+	const { sourceBrand, sourceLast4, plan } = this.props.profile
 	return (
-	    <Modal name="settings">
-		<Error error={this.state.error || this.props.error} />
-		<h2>Account Settings</h2>
-		<Input placeholder="Your email..."
-		       type="email"
-		       name="email"
-		       value={this.state.email}
-		       onChange={this.onChange} 
-		       onBlur={this.validateEmail}
-		       autoComplete="true" />
-		<Button className="right" onClick={this.saveSettings}>
-		    Save
-		</Button>
-		<Button>Delete Account</Button>
-		<hr/>
-		<h2> Subscription </h2>
-		<Button>Cancel subscription</Button>
-		<Button className="right">Update Card</Button>
-	    </Modal>
+	    <>
+		<Modal name="settings">
+		    <Error error={this.state.error || this.props.error} />
+		    <h2>Account Settings</h2>
+		    <Input placeholder="Your email..."
+			   type="email"
+			   name="email"
+			   value={this.state.email}
+			   onChange={this.onChange} 
+			   onBlur={this.validateEmail}
+			   autoComplete="true" />
+		    <Button className="right" onClick={this.saveSettings}>
+			Save
+		    </Button>
+		    <div className="clearfix"/>
+		    {/* <Button>Delete Account</Button> */}
+
+		    { plan === 'premium' ?
+		      <>
+			  <hr/>
+			  <h2> Subscription </h2>
+			  <p>Payment method: { sourceBrand } ending in { sourceLast4 }</p>
+			  <Button onClick={()=>
+			      this.props.toggleModal('confirm-cancel-subscription')}>
+			      Cancel subscription
+			  </Button>
+			  <StripeCheckout
+			      token={this.props.updatePaymentInfo}
+			      name="Update Payment Info"
+			      panelLabel="Update Card"
+			      stripeKey={process.env.STRIPE_PUBLIC}
+			      email={this.props.profile.email}
+			      allowRememberMe={false}>
+			      <Button className="right"> Update Card </Button>
+			  </StripeCheckout>
+		      </>
+		      : null}
+		</Modal>
+		<Modal name="confirm-cancel-subscription">
+		    <h2> Are you sure? </h2>
+		    <Button onClick={()=> this.props.toggleModal('settings')}>
+			Cancel
+		    </Button>
+		    <Button className="right" onClick={this.props.cancelSubscription}>
+			Confirm
+		    </Button>
+		</Modal>
+	    </>
 	)
     }
 }
 
 export default connect(({utils: { error }, profile})=>({error, profile}),
-		       { updateProfile, toggleModal })(ForgotPasswordModal)
+		       { updateProfile,
+			 updatePaymentInfo,
+			 cancelSubscription,
+			 toggleModal })(SettingsModal)

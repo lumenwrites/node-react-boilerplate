@@ -114,10 +114,44 @@ export const upgrade = (token) => async dispatch => {
 	const res = await axios.post(`${API_URL}/profiles/upgrade`, { token }, config)
 	const profile = res.data
 	console.log(`We are in business, ${profile.email}!`)
-	/* dispatch({ type: 'FETCH_PROFILE', payload: profile }) */
+	dispatch({ type: 'FETCH_PROFILE', payload: res.data })
+	dispatch({ type: 'NOTIFICATION', payload: "Success! Thank you for upgrading!" })
     } catch(err) {
 	if (!err.response) return console.log(err)
 	console.log("[profiles actions] upgrade profile error:", err.response.data)
 	dispatch({ type: 'ERROR', payload: err.response.data })
     }     
 }
+
+export const updatePaymentInfo = (token) => async dispatch => {
+    try {
+	const config = { headers:  { authorization:localStorage.getItem('token')} }
+	const res = await axios.post(`${API_URL}/profiles/update-payment-info`,
+				     { token }, config)
+	const profile = res.data
+	console.log(`Payment info updated!`)
+	dispatch({ type: 'FETCH_PROFILE', payload: res.data })
+	dispatch({ type: 'NOTIFICATION', payload: "Success! Payment info updated!" })
+    } catch(err) {
+	if (!err.response) return console.log(err)
+	console.log("[profiles actions] upgrade profile error:", err.response.data)
+	dispatch({ type: 'ERROR', payload: err.response.data })
+    }     
+}
+
+
+export const cancelSubscription = () => async dispatch => {
+    try {
+	const config = { headers:  { authorization:localStorage.getItem('token')} }
+	const res = await axios.post(`${API_URL}/profiles/cancel-subscription`,
+				     null, config)
+	const profile = res.data
+	dispatch({ type: 'FETCH_PROFILE', payload: res.data })
+	dispatch({ type: 'NOTIFICATION', payload: "Success! Subscription cancelled!" })
+    } catch(err) {
+	if (!err.response) return console.log(err)
+	console.log("[profiles actions] upgrade profile error:", err.response.data)
+	dispatch({ type: 'ERROR', payload: err.response.data })
+    }     
+}
+

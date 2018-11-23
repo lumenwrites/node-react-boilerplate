@@ -12,15 +12,13 @@ import { ExtractJwt } from  'passport-jwt'
 /* Models */
 import mongoose from 'mongoose'
 import Profile from '../models/Profile'
-/* Secret keys */
-import keys from '../../config/keys'
 
 /* Google Auth */
 const googleAuth = new GoogleStrategy({
     /* Options */
     /* Keys are generated on GCP dashboard as Google+ API credentials */
-    clientID: keys.googleClientID,
-    clientSecret: keys.googleClientSecret,
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     /* CallbackURL is where google redirects user after he clicks "Allow",
        passing me the code server can use to fetch user info from google. */
     callbackURL: '/api/v1/profiles/google/callback',
@@ -63,7 +61,7 @@ const jwtAuth = new JwtStrategy({
     /* Tell it where to look for token */
     jwtFromRequest: ExtractJwt.fromHeader('authorization'),
     /* secretOrKey is used to decode the token. */
-    secretOrKey: keys.secret,
+    secretOrKey: process.env.PASSPORT_SECRET,
     /* passReqToCallback: true, */
 }, async (payload, done) => {
     /* Payload contains a decoded JWT token, containing sub and iat

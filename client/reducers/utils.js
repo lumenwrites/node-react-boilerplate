@@ -19,7 +19,7 @@ export default function (state = INITIAL_STATE, action) {
 	    return {...state, error: action.payload}
 	case 'FETCH_PROFILE':
 	    /* Successfully fetched profile, remove error message, close modal. */
-	    return {...state} //, showModal: "", error:""}
+	    return {...state, showModal: "", error:""}
 	case 'LOGOUT':
 	    return {...state, notification: "Logout successful."}
 	default:

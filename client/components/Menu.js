@@ -15,11 +15,12 @@ class Menu extends Component {
 		    <FontAwesomeIcon icon={["fas", "bars"]}/>
 		</div>
 		<div className="dropdown-menu">
+		    { this.props.profile.plan === 'free' &&
 		    <div className="menu-item"
 			onClick={()=> this.props.toggleModal("upgrade")}>
 			<FontAwesomeIcon icon={["fas", "arrow-circle-up"]}/>
 			Upgrade
-		    </div>
+		    </div> }
 		    <div className="menu-item"
 			onClick={()=> this.props.toggleModal("settings")}>
 			<FontAwesomeIcon icon={["fas", "cog"]}/>
@@ -76,4 +77,4 @@ const Dropdown = styled.div`
     }
 `
 
-export default connect(null, { logout, toggleModal})(Menu)
+export default connect(({profile})=>({profile}), { logout, toggleModal})(Menu)

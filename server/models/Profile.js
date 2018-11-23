@@ -36,7 +36,7 @@ const profileSchema = new Schema({
 	unique: false,
 	required: false,
 	/* default: DEFAULT_PROFILE.prefs */
-    }
+    },
     /* Stripe */
     plan: { type: String, default: 'free' },
     stripe: {
@@ -51,8 +51,9 @@ const profileSchema = new Schema({
 
 /* Send back to client only the fields I want from profile */
 profileSchema.methods.publicFields = function() {
-    const { email, username, prefs, plan } = this
-    return { email, username, prefs, plan }
+    const { email, username, prefs, plan, stripe } = this
+    const { sourceLast4, sourceBrand } = stripe
+    return { email, username, prefs, plan, sourceLast4, sourceBrand }
 }
 
 /* Profile collection */

@@ -7,7 +7,7 @@ import { randomBytes } from 'crypto'
 import { promisify } from 'util'
 /* Sendgrid for password reset */
 import sgMail from '@sendgrid/mail'
-sgMail.setApiKey(keys.sendgrid)
+sgMail.setApiKey(process.env.SENDGRID_KEY)
 /* Stripe */
 import Stripe from 'stripe'
 const stripe = Stripe(process.env.STRIPE_SECRET)
@@ -18,15 +18,13 @@ import { sendNewUserNotification } from '../utils/profiles'
 /* Models */
 import Profile from '../models/Profile'
 
-/* Secret keys */
-import keys from '../../config/keys'
 
 /* Generate JWT token for a user */
 function tokenForUser(profile) {
     const timestamp = new Date().getTime()
     /* sub (subject) is profile.id encoded with a secret random string.
        iat - issued at time */
-    return jwt.encode({ sub: profile.id, iat: timestamp }, keys.secret);
+    return jwt.encode({ sub: profile.id, iat: timestamp }, process.env.PASSPORT_SECRET)
 }
 
 /* Return profile (in exchange for jwt) */
@@ -175,22 +173,32 @@ export async function upgrade(req, res) {
     const profile = req.user
     const { token } = req.body
     try {
-	/* You have to create a customer to be able to subscribe him to a plan. */
-	const customer = await stripe.customers.create({
-	    email: profile.email,
-	    /* Source is customer's payment information, a stripe token */
-	    source: token.id,
-	})
+	let customer
+	if (profile.stripe.customerId) {
+	    /* If he was subscribed before, get existing customer */
+	    customer = await stripe.customers.retrieve(profile.stripe.customerId)
+	} else {
+	    /* You have to create a customer to be able to subscribe him to a plan. */
+	    customer = await stripe.customers.create({
+		email: profile.email,
+		/* Source is customer's payment information, a stripe token */
+		source: token.id,
+	    })
+	}
 	const subscription = await stripe.subscriptions.create({
 	    customer: customer.id,
 	    /* If you dont need a different plan for every user,
 	       you just create predetermined ones in the dashboard
-	       (Billing>Products>ProductName>Plan, and get it's id). */
-	    items: [{plan: 'plan_E0NpvLFb1MWuO1'}],
+	       (Billing>Products>ProductName>Plan, and get it's id).
+	       Make sure it's a plan not a product! */
+	    items: [{plan: 'plan_E1W3V6tQjCsa2k'}],
 	})
 	/* Save all the fields I will need */
 	profile.stripe.customerId = customer.id
 	profile.stripe.subscriptionId = subscription.id
+	profile.stripe.sourceId = token.id // or is it token.card.id?
+        profile.stripe.sourceLast4 = token.card.last4
+        profile.stripe.sourceBrand = token.card.brand
 	profile.plan = 'premium'
 	profile.save()
 	/* Return updated profile */
@@ -203,12 +211,15 @@ export async function upgrade(req, res) {
 
 }
 
-export async function updatePaymentMethod(req, res) {
+export async function updatePaymentInfo(req, res) {
     const profile = req.user
     const { token } = req.body
     const { customerId } = profile.stripe
     try {
 	// Stripe API: Attach the new source, update the default source
+	/* This is confusing. In upgrade() I pass token id to create customer's source,
+	   but here I pass the token id, which returns card, not wrapped in a token,
+	   which I then pass to customer as default_source. Something inconsistent here*/
 	const createdSource = await stripe.customers.createSource(customerId, {
             source: token.id,
 	})
@@ -216,7 +227,7 @@ export async function updatePaymentMethod(req, res) {
             default_source: createdSource.id
 	})
 	/* Update our payment source in DB */
-	profile.stripe.sourceId = createdSource.id
+	profile.stripe.sourceId = createdSource.id 
         profile.stripe.sourceLast4 = createdSource.last4
         profile.stripe.sourceBrand = createdSource.brand
 	profile.save()

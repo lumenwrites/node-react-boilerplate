@@ -48,8 +48,7 @@ router.route('/profile').post(jwtAuth, profilesControllers.updateProfile)
 
 /* Payments */
 router.route('/upgrade').post(jwtAuth, profilesControllers.upgrade)
-router.route('/update-payment-method').post(jwtAuth,
-					    profilesControllers.updatePaymentMethod)
+router.route('/update-payment-info').post(jwtAuth, profilesControllers.updatePaymentInfo)
 router.route('/cancel-subscription').post(jwtAuth,
 					  profilesControllers.cancelSubscription)
 router.route('/stripe-webhook').post(jwtAuth,
