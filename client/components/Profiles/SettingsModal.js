@@ -10,13 +10,15 @@ import { updateProfile,
 	 updatePaymentInfo,
 	 cancelSubscription } from '../../actions/profiles'
 import { toggleModal } from '../../actions/utils'
+import { capitalize } from '../../utils'
 
 /* Elements */
-import { Modal, Button, Input, Error } from '../Elements'
+import { Modal, Button, Input, Error, Selector } from '../Elements'
 
 class SettingsModal extends Component {
     state = {
 	error: "",
+	theme: this.props.profile.prefs.theme,
 	email: this.props.profile.email
     }
 
@@ -28,10 +30,10 @@ class SettingsModal extends Component {
     }
 
     saveSettings = ()=> {
-	const { email } = this.state
+	const { email, theme } = this.state
 	const { profile } = this.props
 	profile.email = email
-	profile.prefs = {...profile.prefs}
+	profile.prefs = {...profile.prefs, theme}
 	this.props.updateProfile(profile)
 	this.props.toggleModal(false)
     }
@@ -45,7 +47,7 @@ class SettingsModal extends Component {
     }
 
     render() {
-	const { sourceBrand, sourceLast4, plan } = this.props.profile
+	const { sourceBrand, sourceLast4, plan, prefs } = this.props.profile
 	return (
 	    <>
 		<Modal name="settings">
@@ -58,6 +60,20 @@ class SettingsModal extends Component {
 			   onChange={this.onChange} 
 			   onBlur={this.validateEmail}
 			   autoComplete="true" />
+		    <label>Theme:</label>
+		    <Selector>
+			<div className="handle">
+			    {capitalize(this.state.theme)}
+			</div>
+			<div className="item"
+			     onClick={()=> this.setState({theme:'light'})}>
+			    Light
+			</div>
+			<div className="item"
+			     onClick={()=> this.setState({theme:'dark'})}>
+			    Dark
+			</div>
+		    </Selector>
 		    <Button className="right" onClick={this.saveSettings}>
 			Save
 		    </Button>

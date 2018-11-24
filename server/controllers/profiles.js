@@ -46,7 +46,7 @@ export function updateProfile(req, res) {
 
     profile.save((err, updatedProfile) => {
 	if (err) return res.status(400).send('Error updating a profile.')
-	res.send(returnProfile(updatedProfile))
+	res.send(updatedProfile.publicFields())
     })
 }
 

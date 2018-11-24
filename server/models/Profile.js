@@ -35,7 +35,7 @@ const profileSchema = new Schema({
 	type: JSON,
 	unique: false,
 	required: false,
-	/* default: DEFAULT_PROFILE.prefs */
+	default: {}
     },
     /* Stripe */
     plan: { type: String, default: 'free' },

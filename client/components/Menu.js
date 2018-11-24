@@ -41,6 +41,8 @@ const Dropdown = styled.div`
     position: relative;
     float:left;
     width: 60px;
+    color: ${props => props.theme.textColor};
+
     .handle {
     cursor: pointer;
     float:left;
@@ -55,20 +57,21 @@ const Dropdown = styled.div`
     top: 100%;
     left: 0;
     z-index: 1000;
-    background:white;
+    background: white;
+    background: ${props => props.theme.dropdownBackground};
     box-shadow: 0 2px 4px rgba(0,0,0,.175);
     border: ${props => props.theme.border};
     .menu-item {
-    color: #555;
     padding: 8px;
     display:block;
     cursor:pointer;
-    text-decoration:none;    
+    text-decoration:none;
+    border-bottom: ${props => props.theme.theme === 'dark' && '1px solid rgba(0,0,0,0.15)'};
     &.active {
     color: white;
     }
     &:hover {
-    background: #eee;		
+    background:  ${props => props.theme.dropdownHover};;		
     }
     svg {
     margin-right: 8px;

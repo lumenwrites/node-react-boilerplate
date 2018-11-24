@@ -22,18 +22,40 @@ import Landing from './Landing'
 import Main from './Main'
 
 const theme = {
+    theme: 'light',
     textColor: '#582323',
     placeholderTextColor: '#848faa',
     buttonBackground: '#f66303',
     buttonColor: 'white',
     inputBackground: 'white',
+    selectorBackground: '#fffaf1',
     border: '1px solid rgba(98,24,24,0.2)',
     linkColor: '#008cba',
     modalBackground: '#fff7e9',
     panelBackground: '#fffaf1',
+    dropdownBackground: 'white',
     background1: '#f6e4cd',
     background2: '#fff7e9',
     background3: '#fffaf1'
+}
+
+const themeDark = {
+    theme: 'dark',
+    textColor: '#9baec8',
+    placeholderTextColor: 'rgba(112, 126, 148, 0.57)',
+    buttonBackground: '#363b51',
+    selectorBackground: '#272b37', // bright #363b51
+    buttonColor: '#848faa',
+    inputBackground: '#1f222d',
+    border: '1px solid rgba(156,175,201,0.31)',
+    linkColor: '#008cba',
+    modalBackground: '#363c4a',
+    panelBackground: '#3b4151',
+    dropdownBackground: '#313543',
+    dropdownHover: '#3f465a',
+    background1: '#1f222d',
+    background2: '#272b37',
+    background3: '#2e3241'
 }
 
 const AppStyled = styled.div`
@@ -45,6 +67,7 @@ const AppStyled = styled.div`
 class App extends Component {
     componentDidMount(){
 	if (window.location.pathname == '/login/') {
+	    /* Google OAuth. Save token, login, redirect.  */
 	    console.log("[App] Mounted after oAuth.")
 	    const { token } = queryString.parse(location.search)
 	    console.log('[Main] Saving token to local storage, redirecting to /')
@@ -87,9 +110,10 @@ class App extends Component {
 
     render() {
 	const { profile } = this.props
-	console.log('Render App', this.props.profile.email)
+	console.log('Render App', profile)
+	const darkTheme = profile.email && profile.prefs.theme==="dark"
 	return (
-	    <ThemeProvider theme={theme}>
+	    <ThemeProvider theme={darkTheme ? themeDark : theme}>
 		<AppStyled>
 		    { localStorage.getItem('token') ?
 		      this.renderMain() : this.renderLanding() }
