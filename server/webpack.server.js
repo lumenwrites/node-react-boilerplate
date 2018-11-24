@@ -14,9 +14,9 @@ module.exports = {
 	filename: 'server.build.js'
     },
 
-    /* Exclude default node packages */
+    /* Exclude default built-in node packages like path, fs, etc */
     target: 'node',
-    /* Exclude node_modules from bundling in webpack */
+    /* Exclude all modules in node_modules folder from bundling in webpack */
     externals: [nodeExternals()], 
     
     /* Fixes relative paths */

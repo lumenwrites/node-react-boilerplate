@@ -1,5 +1,7 @@
 import jwt from 'jwt-simple'
-import bcrypt from 'bcrypt'
+/* Use bcrypt-nodejs, not bcrypt, because bcrypt causes some weirdass errors
+   when I try to build it with webpack. */
+import bcrypt from 'bcrypt-nodejs'
 /* For generating random token */
 import { randomBytes } from 'crypto'
 /* Turn callback-based function into a promise-based function, so I could use

@@ -1,5 +1,5 @@
 /* Make the variables.env available in our application */
-require('dotenv').config({ path: './variables.env'})
+require('dotenv').config({ path: '../variables.env'})
 
 /* Entry Script */
 if (process.env.NODE_ENV === 'production') {
