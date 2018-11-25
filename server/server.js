@@ -7,7 +7,7 @@ import path from 'path' // Manipulate filepaths
 import './connectDB'
 
 import profilesRoutes from './routes/profiles.js'
-import { stripeWebhook } from './controllers/profiles.js'
+import { stripeWebhookRouter } from './routes/profiles.js'
 
 
 /* Setup server */
@@ -15,8 +15,9 @@ const server = express()
 server.set('view engine', 'ejs')
 server.set('views', __dirname + '/views')
 server.use(cors())
-/* Stripe webhook must be used before the body-parser to validate correctly */
-server.use('/api/v1/profiles/stripe-webhook', stripeWebhook)
+/* Stripe webhook must use bodyParser.raw() instead of .json()
+   to validate signature correctly */
+server.use('/api/v1/profiles', stripeWebhookRouter)
 /* Parse received JSON, and put it into req.body */
 server.use(bodyParser.json({ limit: '50mb' }))
 

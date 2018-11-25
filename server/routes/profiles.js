@@ -1,6 +1,7 @@
 import base64url from 'base64url'
 import { Router } from 'express'
 import passport from 'passport'
+import bodyParser from 'body-parser'
 
 import * as profilesControllers from '../controllers/profiles';
 
@@ -51,7 +52,15 @@ router.route('/upgrade').post(jwtAuth, profilesControllers.upgrade)
 router.route('/update-payment-info').post(jwtAuth, profilesControllers.updatePaymentInfo)
 router.route('/cancel-subscription').post(jwtAuth,
 					  profilesControllers.cancelSubscription)
+
+/* Stripe webhook must use bodyParser.raw() instead of .json()
+   to validate signature correctly */
 //router.route('/stripe-webhook').post(profilesControllers.stripeWebhook)
+const stripeWebhookRouter = new Router()
+stripeWebhookRouter
+    .use(bodyParser.raw({type: '*/*'}))
+    .route('/stripe-webhook').post(profilesControllers.stripeWebhook)
+export { stripeWebhookRouter }
 
 
 export default router
