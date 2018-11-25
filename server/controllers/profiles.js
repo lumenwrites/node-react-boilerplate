@@ -31,7 +31,6 @@ function tokenForUser(profile) {
 
 /* Return profile (in exchange for jwt) */
 export function getProfile(req, res) {
-    console.log('getProfile')
     const profile  = req.user
     profile.lastLoggedIn = new Date()
     profile.save()
@@ -88,7 +87,6 @@ export async function passwordSignup(req, res, next) {
 
 /* Email/Password Login. */
 export async function passwordLogin(req, res, next) {
-    console.log('passwordLogin')
     const { email, password } = req.body
 
     const profile = await Profile.findOne({email:email})
@@ -202,6 +200,16 @@ export async function upgrade(req, res) {
         profile.stripe.sourceBrand = token.card.brand
 	profile.plan = 'premium'
 	profile.save()
+
+	/* Notify me that user has upgraded account */
+	const msg = {
+	    to: process.env.ADMIN_EMAIL,
+	    from: process.env.CONTACT_EMAIL,
+	    subject: `${profile.email} has upgraded his WritingStreak account!`,
+	    text: "${profile.email} has upgraded his WritingStreak account!"
+	}
+	sgMail.send(msg)
+
 	/* Return updated profile */
 	res.send(profile.publicFields())
     } catch(err) {
@@ -250,6 +258,16 @@ export async function cancelSubscription(req, res) {
 	profile.stripe.subscriptionId = null
 	profile.plan = 'free'
 	profile.save()
+
+	/* Notify me that user has cancelled subscription */
+	const msg = {
+	    to: process.env.ADMIN_EMAIL,
+	    from: process.env.CONTACT_EMAIL,
+	    subject: `${profile.email} has cancelled his WritingStreak subscription!`,
+	    text: "${profile.email} has cancelled his WritingStreak subcription!"
+	}
+	sgMail.send(msg)
+
 	/* Return updated profile */
 	res.send(profile.publicFields())
     } catch(err) {
@@ -278,7 +296,6 @@ export async function stripeWebhook(req, res) {
 		subject: `Someone's payment has failed`,
 		text: JSON.stringify(event, null, 4)
 	    }
-	    console.log('sending email',msg)
 	    sgMail.send(msg)
 	}
 
