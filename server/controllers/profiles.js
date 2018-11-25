@@ -1,7 +1,7 @@
 import jwt from 'jwt-simple'
 /* Use bcrypt-nodejs, not bcrypt, because bcrypt causes some weirdass errors
    when I try to build it with webpack. */
-import bcrypt from 'bcrypt-nodejs'
+import bcrypt from 'bcryptjs'
 /* For generating random token */
 import { randomBytes } from 'crypto'
 /* Turn callback-based function into a promise-based function, so I could use
@@ -99,10 +99,9 @@ export async function passwordLogin(req, res, next) {
 		  + "so it doesn't have a password. Use Google to login."
 	return res.status(400).send(err)
     }
-
     const passwordsMatch = await bcrypt.compare(password, profile.password)
     if (!passwordsMatch) return res.status(400).send("Email and password don't match")
-    
+
     profile.lastLoggedIn = new Date()
     profile.save()
     
