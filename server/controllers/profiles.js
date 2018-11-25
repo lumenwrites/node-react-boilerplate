@@ -288,7 +288,7 @@ export async function stripeWebhook(req, res) {
 	/* TODO:
 	   If payment failed, send an email asking to update payment method,
 	   and downgrade account to 'free' */
-	res.status(200)
+	res.status(200).end()
     } catch (err) {
 	console.log('Error validating webhook', err)
 	res.status(400).end()
