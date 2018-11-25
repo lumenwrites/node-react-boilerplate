@@ -5,16 +5,6 @@ var dotenv = require('dotenv')
 
 function getPlugins() {
     const plugins = []
-    if (process.env.NODE_ENV === "production") {
-	/* Makes React tools development warning go away */
-        plugins.push(new webpack.DefinePlugin({
-	    'process.env': {
-		NODE_ENV: JSON.stringify('production')
-	    }
-	}))
-    }
-
-
     /*Parse environment vars(they have to be compiled by webpack to work on client)*/
     const env = dotenv.config({ path: '../config/variables.prod.env'}).parsed
     /* Turn them into a nice object */

@@ -21,25 +21,23 @@ class Upgrade extends Component {
 
 
     render() {
+	if (this.state.waiting) return <Modal name="upgrade">Processing...</Modal>
+	if (this.props.error) return <Error error={this.props.error} />
+
 	return (
-	    <Modal name="upgrade">
-		<h2> Upgrade your account </h2>
-		{ this.props.error ?
-		<Error error={this.props.error} />
-		:
-		<StripeCheckout
-		    token={this.upgrade}
-		    name="Upgrade"
-		    stripeKey={process.env.STRIPE_PUBLIC}
-		    amount={1000}
-		    currency="USD"
-		    email={this.props.profile.email}
-		    allowRememberMe={false}>
-		    { this.state.waiting ?
-		      <p>Waiting for a response...</p>
-		      : <Button fullwidth large> Upgrade ($10/mo) </Button>}
-		</StripeCheckout>}
-	    </Modal>
+	<Modal name="upgrade">
+	    <h2> Upgrade your account </h2>
+	      <StripeCheckout
+		  token={this.upgrade}
+		  name="Upgrade"
+		  stripeKey={process.env.STRIPE_PUBLIC}
+		  amount={1000}
+		  currency="USD"
+		  email={this.props.profile.email}
+		  allowRememberMe={false}>
+		  <Button fullwidth large> Upgrade ($10/mo) </Button>
+	      </StripeCheckout>
+	</Modal>
 	)
     }
 }

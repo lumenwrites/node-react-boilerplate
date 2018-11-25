@@ -5,7 +5,7 @@ var dotenv = require('dotenv')
 
 function getPlugins() {
     /*Parse environment vars(they have to be compiled by webpack to work on client)*/
-    const env = dotenv.config({ path: './variables.env'}).parsed
+    const env = dotenv.config({ path: '../config/variables.dev.env'}).parsed
     /* Turn them into a nice object */
     const envKeys = Object.keys(env).reduce((prev, next) => {
 	prev[`process.env.${next}`] = JSON.stringify(env[next]);
