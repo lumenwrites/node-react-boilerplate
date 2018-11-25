@@ -272,7 +272,7 @@ export async function stripeWebhook(req, res) {
 	console.log(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
 	let event = stripe.webhooks.constructEvent(req.body, sig,
 						   process.env.STRIPE_WEBHOOK_SECRET)
-	console.log('signature checked')
+	console.log('signature checked', event)
 	if (event.type === 'invoice.payment_failed') {
 	    console.log('sending email')
 	    /* Send me an email about failed payment */
@@ -288,7 +288,7 @@ export async function stripeWebhook(req, res) {
 	/* TODO:
 	   If payment failed, send an email asking to update payment method,
 	   and downgrade account to 'free' */
-	res.send(200)
+	res.status(200)
     } catch (err) {
 	console.log('Error validating webhook', err)
 	res.status(400).end()
