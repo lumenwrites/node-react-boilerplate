@@ -174,8 +174,10 @@ export async function upgrade(req, res) {
     try {
 	let customer
 	if (profile.stripe.customerId) {
+	    console.log('profile already has customerId', customerId)
 	    /* If he was subscribed before, get existing customer */
 	    customer = await stripe.customers.retrieve(profile.stripe.customerId)
+	    console.log('retreived customer', customer)
 	} else {
 	    /* You have to create a customer to be able to subscribe him to a plan. */
 	    customer = await stripe.customers.create({
@@ -183,6 +185,7 @@ export async function upgrade(req, res) {
 		/* Source is customer's payment information, a stripe token */
 		source: token.id,
 	    })
+	    console.log('created customer', customer)
 	}
 	const subscription = await stripe.subscriptions.create({
 	    customer: customer.id,
@@ -200,7 +203,6 @@ export async function upgrade(req, res) {
         profile.stripe.sourceBrand = token.card.brand
 	profile.plan = 'premium'
 	profile.save()
-
 	/* Notify me that user has upgraded account */
 	const msg = {
 	    to: process.env.ADMIN_EMAIL,
