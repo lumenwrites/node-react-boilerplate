@@ -63,7 +63,7 @@ class SettingsModal extends Component {
 		    <label>Theme:</label>
 		    <Selector>
 			<div className="handle">
-			    {capitalize(this.state.theme)}
+			    {capitalize(this.state.theme || 'light')}
 			</div>
 			<div className="item"
 			     onClick={()=> this.setState({theme:'light'})}>
