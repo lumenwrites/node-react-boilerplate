@@ -287,6 +287,7 @@ export async function stripeWebhook(req, res) {
 	   and downgrade account to 'free' */
 	res.send(200)
     } catch (err) {
+	console.log('Error validating webhook', err)
 	res.status(400).end()
     }
 }
