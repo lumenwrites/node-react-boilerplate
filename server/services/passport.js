@@ -66,7 +66,7 @@ const jwtAuth = new JwtStrategy({
 }, async (payload, done) => {
     /* Payload contains a decoded JWT token, containing sub and iat
        sub(subject) is profile.id, iat - issued at time. */
-    console.log("Attempting JWT login", payload)
+    /* console.log("Attempting JWT login", payload) */
 
     const profile = await Profile.findById(payload.sub)
     if (!profile) return done(new Error("Profile not found, JWT login failed."), false)

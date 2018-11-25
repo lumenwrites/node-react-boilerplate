@@ -179,6 +179,8 @@ export async function upgrade(req, res) {
 	    customer = await stripe.customers.retrieve(profile.stripe.customerId)
 	    console.log('retreived customer', customer)
 	} else {
+	    console.log('token', token)
+	    console.log('req.body', req.body)
 	    /* You have to create a customer to be able to subscribe him to a plan. */
 	    customer = await stripe.customers.create({
 		email: profile.email,
