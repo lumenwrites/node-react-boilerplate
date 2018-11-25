@@ -24,6 +24,9 @@ class Upgrade extends Component {
 	return (
 	    <Modal name="upgrade">
 		<h2> Upgrade your account </h2>
+		{ this.props.error ?
+		<Error error={this.props.error} />
+		:
 		<StripeCheckout
 		    token={this.upgrade}
 		    name="Upgrade"
@@ -35,10 +38,11 @@ class Upgrade extends Component {
 		    { this.state.waiting ?
 		      <p>Waiting for a response...</p>
 		      : <Button fullwidth large> Upgrade ($10/mo) </Button>}
-		</StripeCheckout>
+		</StripeCheckout>}
 	    </Modal>
 	)
     }
 }
 
-export default connect(({ profile }) => ({ profile }), { upgrade })(Upgrade)
+export default connect(({ profile, utils: { error } }) => ({ profile, error }),
+		       { upgrade })(Upgrade)

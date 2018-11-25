@@ -104,10 +104,10 @@ class SettingsModal extends Component {
 		<Modal name="confirm-cancel-subscription">
 		    <h2> Are you sure? </h2>
 		    <Button onClick={()=> this.props.toggleModal('settings')}>
-			Cancel
+			Don't Cancel
 		    </Button>
 		    <Button className="right" onClick={this.props.cancelSubscription}>
-			Confirm
+			Cancel Subscription
 		    </Button>
 		</Modal>
 	    </>
