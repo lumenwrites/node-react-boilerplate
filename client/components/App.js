@@ -75,6 +75,7 @@ class App extends Component {
 	    window.history.replaceState(null, null, '/')
 	    this.props.setNotification('Login successful!')
 	}
+
 	if (window.location.pathname === '/reset-password') {
 	    this.props.toggleModal('reset-password')
 	}

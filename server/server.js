@@ -32,7 +32,7 @@ server.use((req, res) =>
 
 
 /* Serve */
-const port = process.env.PORT || 3031
+const port = process.env.PORT || 3030
 server.listen(port, function () {
     console.log(`Running on port ${port}!`)
 })

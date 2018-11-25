@@ -267,9 +267,10 @@ export async function cancelSubscription(req, res) {
  */
 export async function stripeWebhook(req, res) {
     const event = req.body
-    /* need to check signature?
-       let sig = req.headers["stripe-signature"]*/
-
+    /* need to check signature? */
+    let sig = req.headers["stripe-signature"]
+    console.log('Stripe webhook even', event)
+    console.log('sig', sig)
     /* TODO:
        If payment failed, send an email asking to update payment method,
        and downgrade account to 'free' */

@@ -2,24 +2,21 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-class Selector extends Component {
-    render() {
-	return (
-	    <Dropdown>
-		{this.props.children[0]}
-		<FontAwesomeIcon icon={["fas", "caret-down"]}/>
-		<div className="dropdown-menu">
-		    {this.props.children.slice(1)}
-		</div>
-	    </Dropdown>
-	)
-    }
-}
+const Selector = props => (
+    <Dropdown>
+	{props.children[0]}
+	<FontAwesomeIcon icon={["fas", "caret-down"]}/>
+	<div className="dropdown-menu">
+	    {props.children.slice(1)}
+	</div>
+    </Dropdown>
+)
 
 export default Selector
 
 const Dropdown = styled.div`
     position: relative;
+    color: ${props => props.theme.textColor};
     .handle {
     cursor: pointer;
     border: ${props => props.theme.border};
@@ -43,11 +40,12 @@ const Dropdown = styled.div`
     left: 0;
     z-index: 1000;
     background:white;
+    background: ${props => props.theme.dropdownBackground};
     box-shadow: 0 2px 4px rgba(0,0,0,.175);
     border: ${props => props.theme.border};
     .item {
-    color: #555;
     padding: 8px;
+    border-bottom: ${props => props.theme.theme === 'dark' && '1px solid rgba(0,0,0,0.15)'};
     display:block;
     cursor:pointer;
     text-decoration:none;    
@@ -55,7 +53,7 @@ const Dropdown = styled.div`
     color: white;
     }
     &:hover {
-    background: #eee;		
+    background:  ${props => props.theme.dropdownHover};
     }
     svg {
     margin-right: 8px;
