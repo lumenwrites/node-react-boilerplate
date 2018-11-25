@@ -16,7 +16,7 @@ server.set('view engine', 'ejs')
 server.set('views', __dirname + '/views')
 server.use(cors())
 /* Stripe webhook must use bodyParser.raw() instead of .json()
-   to validate signature correctly */
+   to validate signature correctly, so I put it before the rest of the routes */
 server.use('/api/v1/profiles', stripeWebhookRouter)
 /* Parse received JSON, and put it into req.body */
 server.use(bodyParser.json({ limit: '50mb' }))

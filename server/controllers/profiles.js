@@ -265,13 +265,16 @@ export async function cancelSubscription(req, res) {
    something happens, such as if payment fails
  */
 export async function stripeWebhook(req, res) {
-    /* Check signature */
-    try {
+    console.log('stripeWebhook')
+    try {	
+	/* Check signature */
 	let sig = req.headers["stripe-signature"]
 	console.log(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
 	let event = stripe.webhooks.constructEvent(req.body, sig,
 						   process.env.STRIPE_WEBHOOK_SECRET)
+	console.log('signature checked')
 	if (event.type === 'invoice.payment_failed') {
+	    console.log('sending email')
 	    /* Send me an email about failed payment */
 	    const msg = {
 		to: process.env.ADMIN_EMAIL,
