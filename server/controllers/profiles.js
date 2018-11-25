@@ -266,28 +266,27 @@ export async function cancelSubscription(req, res) {
  */
 export async function stripeWebhook(req, res) {
     /* Check signature */
-    let sig = req.headers["stripe-signature"]
-    let event
     try {
-	event = stripe.webhooks.constructEvent(req.body, sig,
-					       process.env.STRIPE_WEBHOOK_SECRET)
+	let sig = req.headers["stripe-signature"]
+	let event = stripe.webhooks.constructEvent(req.body, sig,
+						   process.env.STRIPE_WEBHOOK_SECRET)
+	console.log(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET)
+	if (event.type === 'invoice.payment_failed') {
+	    /* Send me an email about failed payment */
+	    const msg = {
+		to: process.env.ADMIN_EMAIL,
+		from: process.env.CONTACT_EMAIL,
+		subject: `Someone's payment has failed`,
+		text: event
+	    }
+	    sgMail.send(msg)
+	}
+
+	/* TODO:
+	   If payment failed, send an email asking to update payment method,
+	   and downgrade account to 'free' */
+	res.send(200)
     } catch (err) {
 	res.status(400).end()
     }
-
-    if (event.type === 'invoice.payment_failed') {
-	/* Send me an email about failed payment */
-	const msg = {
-	    to: process.env.ADMIN_EMAIL,
-	    from: process.env.CONTACT_EMAIL,
-	    subject: `Someone's payment has failed`,
-	    text: event
-	}
-	sgMail.send(msg)
-    }
-
-    /* TODO:
-       If payment failed, send an email asking to update payment method,
-       and downgrade account to 'free' */
-    res.send(200)
 }
