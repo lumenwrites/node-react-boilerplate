@@ -4,6 +4,7 @@ const { API_URL } = process.env
 
 /* Fetch profile */
 export const fetchProfile = () => async dispatch => {
+    console.log('API_URL',API_URL)
     try {
 	const config = { headers:  { authorization:localStorage.getItem('token')} }
 	const res = await axios.get(`${API_URL}/profiles/profile`, config)

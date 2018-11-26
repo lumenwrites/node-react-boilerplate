@@ -31,7 +31,6 @@ function tokenForUser(profile) {
 
 /* Return profile (in exchange for jwt) */
 export function getProfile(req, res) {
-    console.log('test error')
     const profile  = req.user
     profile.lastLoggedIn = new Date()
     profile.save()
