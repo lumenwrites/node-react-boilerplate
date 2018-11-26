@@ -111,7 +111,7 @@ class App extends Component {
 
     render() {
 	const { profile } = this.props
-	console.log('Render App', profile)
+	console.log('Render App')
 	const darkTheme = profile.email && profile.prefs.theme==="dark"
 	return (
 	    <ThemeProvider theme={darkTheme ? themeDark : theme}>
