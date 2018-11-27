@@ -3,15 +3,6 @@ import '@babel/polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import ReactGA from 'react-ga'
-ReactGA.initialize(process.env.GOOGLE_ANALYTICS_TRACKING_CODE)
-ReactGA.pageview(window.location.pathname + window.location.search);
-ReactGA.pageview('/test-google-ga');
-ReactGA.event({
-    category: 'User',
-    action: 'Created account'
-})
-
 /* FontAwesome */
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'

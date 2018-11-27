@@ -3,6 +3,10 @@ import { connect } from 'react-redux'
 import styled, { ThemeProvider } from 'styled-components'
 import queryString from 'query-string'
 
+/* Google analytics */
+import ReactGA from 'react-ga'
+ReactGA.initialize(process.env.GOOGLE_ANALYTICS_TRACKING_CODE)
+
 /* Actions */
 import { fetchProfile } from '../actions/profiles'
 import { setNotification, toggleModal } from '../actions/utils'
@@ -20,6 +24,7 @@ import { Notification } from './Elements'
 /* Components */
 import Landing from './Landing'
 import Main from './Main'
+import Head from './Head'
 
 const theme = {
     theme: 'light',
@@ -63,9 +68,19 @@ const AppStyled = styled.div`
     height: 100%;
 `
 
-
 class App extends Component {
     componentDidMount(){
+	/* ReactGA.pageview(window.location.pathname + window.location.search) */
+	ReactGA.pageview('/google-analytics-test')
+	ReactGA.event({
+	    category: 'User',
+	    action: 'Created account'
+	})
+	ReactGA.exception({
+	    description: 'An error ocurred',
+	    fatal: true
+	})
+
 	if (window.location.pathname == '/login/') {
 	    /* Google OAuth. Save token, login, redirect.  */
 	    console.log("[App] Mounted after oAuth.")
@@ -91,9 +106,9 @@ class App extends Component {
 	if (!this.props.profile.email) return null
 	return (
 	    <>
-		<Main/>
-		<SettingsModal/>
-		<Upgrade/>
+	      <Main/>
+	      <SettingsModal/>
+	      <Upgrade/>
 	    </>
 	)
     }
@@ -101,10 +116,10 @@ class App extends Component {
     renderLanding() {
 	return (
 	    <>
-		<Landing/>
-		<LoginModal/>
-		<ForgotPasswordModal/>
-		<ResetPasswordModal/>
+	      <Landing/>
+	      <LoginModal/>
+	      <ForgotPasswordModal/>
+	      <ResetPasswordModal/>
 	    </>
 	) 
     }
@@ -115,12 +130,13 @@ class App extends Component {
 	const darkTheme = profile.email && profile.prefs.theme==="dark"
 	return (
 	    <ThemeProvider theme={darkTheme ? themeDark : theme}>
-		<AppStyled>
-		    { localStorage.getItem('token') ?
-		      this.renderMain() : this.renderLanding() }
-		    <Notification/>
-		    <GlobalStyle />
-		</AppStyled>
+	      <AppStyled>
+		{ localStorage.getItem('token') ?
+                  this.renderMain() : this.renderLanding() }
+		<Notification/>
+		<GlobalStyle />
+                <Head />
+              </AppStyled>
 	    </ThemeProvider>
 	)
     }
