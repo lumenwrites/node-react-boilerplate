@@ -47,8 +47,8 @@ server.use("/", (req, res) => {
 
 
 
-server.use((req, res) =>
-    res.sendFile(path.resolve(__dirname, '../client/index.html')))
+// server.use((req, res) =>
+//     res.sendFile(path.resolve(__dirname, '../client/index.html')))
 
 /* Serve */
 const port = process.env.PORT || 3031
