@@ -32,10 +32,21 @@ server.get('/client.js', (req,res) => {
     res.sendFile(path.resolve(__dirname, '../client/dist/client.js'))
 })
 
+server.set('view engine', 'ejs')
+server.set('views', path.resolve(__dirname, './views'))
+
+
+server.use("/", (req, res) => {
+    const { TITLE, DESCRIPTION, KEYWORDS, AUTHOR, FAVICON, SOCIAL_IMAGE,
+            URL, AUTHOR_HANDLE, PROJECT_HANDLE } = process.env
+    res.render('index', { TITLE, DESCRIPTION, KEYWORDS, AUTHOR, FAVICON, SOCIAL_IMAGE,
+                          URL, AUTHOR_HANDLE, PROJECT_HANDLE })
+})
+
+
+
 server.use((req, res) =>
     res.sendFile(path.resolve(__dirname, '../client/index.html')))
-
-
 
 /* Serve */
 const port = process.env.PORT || 3031

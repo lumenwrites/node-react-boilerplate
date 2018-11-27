@@ -24,7 +24,7 @@ import { Notification } from './Elements'
 /* Components */
 import Landing from './Landing'
 import Main from './Main'
-import Head from './Head'
+// import Head from './Head'
 
 const theme = {
     theme: 'light',
@@ -135,7 +135,7 @@ class App extends Component {
                   this.renderMain() : this.renderLanding() }
 		<Notification/>
 		<GlobalStyle />
-                <Head />
+                {/* <Head /> */}
               </AppStyled>
 	    </ThemeProvider>
 	)

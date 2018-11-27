@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+				   maximum-scale=1.0, user-scalable=no" />
+
+    <!-- Meta -->
+    <title><%= TITLE %></title>
+    <meta name="description" content=<%= DESCRIPTION %>/>
+    <meta name="keywords" content=<%= KEYWORDS %>/>
+    <meta name="author" content=<%= AUTHOR %>/>
+    <link rel="shortcut icon" href=<%= FAVICON %>/>
+    <!-- Facebook -->
+    <meta property="og:title" content=<%= TITLE %>/>
+    <meta property="og:type" content="website"/>        
+    <meta property="og:description"
+          content=<%= DESCRIPTION %>/>
+    <meta property="og:url"
+          content=<%= URL %>/>
+    <meta property="og:image"
+          content=<%= SOCIAL_IMAGE %>/>
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content=<%= URL %>/>  
+    <meta property="twitter:title" content=<%= TITLE %> />
+    <meta property="twitter:description" content=<%= DESCRIPTION %>/>
+    <meta property="twitter:creator" content=<%= AUTHOR_HANDLE %> />
+    <meta property="twitter:site" content=<%= PROJECT_HANDLE %> />  
+    <meta property="twitter:image" content=<%= SOCIAL_IMAGE %>/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:100,200,300,400" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,200,300,400" rel="stylesheet"/>
+
+    <!-- PWA -->
+    <!-- 
+	 <meta name="mobile-web-app-capable" content="yes">
+	 <meta name="apple-mobile-web-app-capable" content="yes">
+	 <meta name="apple-mobile-status-bar-style" content="#282c37">    
+	 <link rel="manifest" href="/pwa/manifest.json">
+	 <link rel="icon" sizes="256x256"
+	       href="https://writingstreak.io/img/logo_256x256.png">
+	 <link rel="apple-touch-icon" sizes="256x256"
+	       href="https://writingstreak.io/img/logo_256x256.png">
+	 <meta name="theme-color" content="#282c37">
+	 -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="portal"></div>
+    <noscript>You need to enable JavaScript to use this app.</noscript>
+    <script async src="/client.js"></script>
+  </body> 
+</html>
