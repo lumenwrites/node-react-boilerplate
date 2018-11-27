@@ -32,7 +32,9 @@ server.get('/client.js', (req,res) => {
     res.sendFile(path.resolve(__dirname, '../client/dist/client.js'))
 })
 
+const ejs = require("ejs").__express
 server.set('view engine', 'ejs')
+server.engine('.ejs', ejs)
 server.set('views', path.resolve(__dirname, './views'))
 
 
